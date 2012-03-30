@@ -343,3 +343,6 @@ SOCIAL_AUTH_EXPIRATION = 'expires'
 FACEBOOK_APP_ID = '319245824782103'
 FACEBOOK_API_SECRET = 'ce2645caabfeb6e234e00d3769ce1793'
 FACEBOOK_EXTENDED_PERMISSIONS = ['email', 'create_event', 'publish_stream']
+
+# User Profiles
+AUTH_PROFILE_MODULE = 'user_profile.UserProfile'
