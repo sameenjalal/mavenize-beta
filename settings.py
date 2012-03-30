@@ -298,9 +298,16 @@ apps_list = [
         'django.contrib.markup',
         'django.contrib.messages',
 
-        #'your',
-        #'apps',
-        #'here',
+        'activity_feed',
+        'bookmark',
+        'item',
+        'notification',
+        'request',
+        'review',
+        'social_graph',
+        'user_profile',
+
+        'south',
 ]
 
 if is_solo():
@@ -310,5 +317,4 @@ if is_solo():
         'django_nose',
         'django_coverage',
     ]
-
 INSTALLED_APPS = tuple(apps_list)
