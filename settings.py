@@ -230,7 +230,7 @@ DEBUG_TOOLBAR_CONFIG = {
 
 # Application Settings
 
-SECRET_KEY = 'TODO-generate-a-new-secret-key'
+SECRET_KEY = '8^q6o4zyxy%p!ltd^#t)hqmb_))e5zy^nxg151f7tf)y_@%!9-'
 
 LOGIN_URL = '/login'
 LOGIN_REDIRECT_URL = '/'
@@ -295,6 +295,7 @@ apps_list = [
         'django.contrib.admin',
         'django.contrib.contenttypes',
         'django.contrib.sites',
+        'django.contrib.sessions',
         'django.contrib.markup',
         'django.contrib.messages',
 
@@ -307,6 +308,7 @@ apps_list = [
         'social_graph',
         'user_profile',
 
+        'nexus',
         'south',
 ]
 
