@@ -4,3 +4,4 @@ celery==2.5.1
 django-celery==2.5.1
 commonware==0.3.0
 nexus==0.2.3
+django-social-auth==0.6.7

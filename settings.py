@@ -287,6 +287,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.static',
     'django.core.context_processors.tz',
     'django.contrib.messages.context_processors.messages',
+    'social_auth.context_processors.social_auth_by_name_backends',
 )
 
 TEMPLATE_DIRS = (
@@ -313,6 +314,7 @@ apps_list = [
         'user_profile',
 
         'nexus',
+        'social_auth',
         'south',
 ]
 
@@ -324,3 +326,20 @@ if is_solo():
         'django_coverage',
     ]
 INSTALLED_APPS = tuple(apps_list)
+
+# Social Authentication
+
+AUTHENTICATION_BACKENDS = (
+    'social_auth.backends.facebook.FacebookBackend',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+SOCIAL_AUTH_COMPLETE_URL_NAME  = 'socialauth_complete'
+SOCIAL_AUTH_ASSOCIATE_URL_NAME = 'socialauth_associate_complete'
+SOCIAL_AUTH_EXTRA_DATA = True
+SOCIAL_AUTH_EXPIRATION = 'expires'
+
+# Development Facebook application
+FACEBOOK_APP_ID = '319245824782103'
+FACEBOOK_API_SECRET = 'ce2645caabfeb6e234e00d3769ce1793'
+FACEBOOK_EXTENDED_PERMISSIONS = ['email', 'create_event', 'publish_stream']
