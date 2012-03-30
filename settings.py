@@ -130,8 +130,11 @@ if is_solo():
 
 MEDIA_ROOT = path(ROOT, 'media')
 MEDIA_URL = '/media/'
-ADMIN_MEDIA_PREFIX = '/media/admin'
+ADMIN_MEDIA_PREFIX = '/static/admin/'
 ROOT_URLCONF = 'urls'
+STATIC_ROOT = path(ROOT, 'static')
+STATIC_URL = '/static/'
+STATICFILES_FINDERS = ('django.contrib.staticfiles.finders.AppDirectoriesFinder',)
 
 # Version Information
 
@@ -298,6 +301,7 @@ apps_list = [
         'django.contrib.sessions',
         'django.contrib.markup',
         'django.contrib.messages',
+        'django.contrib.staticfiles',
 
         'activity_feed',
         'bookmark',
