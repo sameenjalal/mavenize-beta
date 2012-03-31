@@ -93,3 +93,31 @@ def delete_agree(sender, instance, **kwargs):
         pk__exact=instance.review.user_id).update(
             agrees_in=F('agrees_in')-1, karma=F('karma')-2)
     instance.review.agrees = F('agrees') - 1
+
+@receiver(post_save, sender=Thank)
+def create_thank(sender, instance, created, **kwargs):
+    """
+    Increment the giver's thanks by one and karma by one.
+    Increment the receiver's thanks by one and karma by two.
+    """
+    if created:
+        UserStatistics.objects.filter(
+            pk__exact=instance.giver_id).update(
+                thanks_out=F('thanks_out')+1, karma=F('karma')+1)
+        UserStatistics.objects.filter(
+            pk__exact=instance.review.user_id).update(
+                thanks_in=F('thanks_in')+1, karma=F('karma')+2)
+        instance.review.thanks = F('thanks') + 1
+
+@receiver(post_delete, sender=Thank)
+def delete_thank(sender, instance, **kwargs):
+    """
+    Undo the updates when the thank was created.
+    """
+    UserStatistics.objects.filter(
+        pk__exact=instance.giver_id).update(
+            thanks_out=F('thanks_out')-1, karma=F('karma')-1)
+    UserStatistics.objects.filter(
+        pk__exact=instance.review.user_id).update(
+            thanks_in=F('thanks_in')-1, karma=F('karma')-2)
+    instance.review.thanks = F('thanks') - 1
