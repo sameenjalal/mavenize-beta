@@ -1,16 +1,20 @@
-"""
-This file demonstrates writing tests using the unittest module. These will pass
-when you run "manage.py test".
+from item.models import Item
+from movie.models import Movie
+import nose.tools as nt
 
-Replace this with more appropriate tests for your application.
-"""
+class TestMovie(object):
+    def setup(self):
+        self.movie = Movie.objects.create(
+            item=Item(), runtime=-100, critic_score=94)
+        self.id = Movie.objects.get(runtime=self.movie.runtime).pk
+    
+    def test_create_movie(self):
+        nt.assert_true(
+            Movie.objects.get(pk=self.id))
 
-from django.test import TestCase
+    def test_delete_movie(self):
+        Movie.objects.get(pk=self.id).delete()
+        nt.assert_false(Item.objects.filter(pk=self.id))
 
-
-class SimpleTest(TestCase):
-    def test_basic_addition(self):
-        """
-        Tests that 1 + 1 always equals 2.
-        """
-        self.assertEqual(1 + 1, 2)
+    def teardown(self):
+        Movie.objects.filter(pk=self.id).delete()

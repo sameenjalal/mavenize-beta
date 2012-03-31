@@ -2,6 +2,7 @@ from django.db import models
 from django.template.defaultfilters import slugify
 from item.models import Item
 from django.db.models.signals import post_save
+from django.db.models.signals import post_delete
 from django.dispatch import receiver
 
 class Genre(models.Model):
@@ -73,7 +74,10 @@ Saves the item when using the following command:
 Movie.objects.create(item=Item(),...)
 """
 @receiver(post_save, sender=Movie)
-def create_item(sender, instance, created, **kwargs):
+def create_movie(sender, instance, created, **kwargs):
     if created:
         instance.item.save()
 
+@receiver(post_delete, sender=Movie)
+def delete_movie(sender, instance, **kwargs):
+    Item.objects.get(pk=instance.pk).delete()
