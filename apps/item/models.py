@@ -48,4 +48,5 @@ class Popularity(models.Model):
 
 @receiver(post_save, sender=Item)
 def create_popularity(sender, instance, created, **kwargs):
-    Popularity.objects.create(item=instance)
+    if created:
+        Popularity.objects.create(item=instance)
