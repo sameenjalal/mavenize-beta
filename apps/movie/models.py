@@ -26,7 +26,7 @@ class Actor(models.Model):
     def save(self, *args, **kwargs):
         if not self.id:
             self.url = slugify(self.name)
-        super(Genre, self).save(*args, **kwargs)
+        super(Actor, self).save(*args, **kwargs)
 
 class Director(models.Model):
     name = models.CharField(max_length=50)
@@ -38,7 +38,7 @@ class Director(models.Model):
     def save(self, *args, **kwargs):
         if not self.id:
             self.url = slugify(self.name)
-        super(Genre, self).save(*args, **kwargs)
+        super(Director, self).save(*args, **kwargs)
 
 class Movie(models.Model):
     item = models.OneToOneField(Item, primary_key=True)
