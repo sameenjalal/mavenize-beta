@@ -10,6 +10,8 @@ class Item(models.Model):
     three_star = models.IntegerField(default=0)
     two_star = models.IntegerField(default=0)
     one_star = models.IntegerField(default=0)
+    bookmarks = models.IntegerField(default=0)
+    bookmarks_active = models.IntegerField(default=0)
 
     def __unicode__(self):
         return str(self.id)
@@ -26,7 +28,6 @@ class Item(models.Model):
             except:
                 raise ObjectDoesNotExist 
         return self._popularity_cache
-
 
 class Link(models.Model):
     item = models.ForeignKey(Item)
