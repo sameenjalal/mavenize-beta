@@ -8,8 +8,13 @@ class Item(models.Model):
     two_star = models.IntegerField(default=0)
     one_star = models.IntegerField(default=0)
 
+    def __unicode__(self):
+        return str(self.id)
+
 class Link(models.Model):
     item = models.ForeignKey(Item)
     partner = models.CharField(max_length=20)
     url = models.CharField(max_length=200)
 
+    def __unicode__(self):
+        return self.url
