@@ -5,13 +5,16 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, primary_key=True)
     avatar = models.ImageField(
         upload_to='img/users/avatars',
-        default='img/users/avatars/default.jpg'
+        default='img/users/avatars/default.jpg',
     )
     thumbnail = models.ImageField(
         upload_to='img/users',
-        default='img/users/thumbnails/default.jpg'
+        default='img/users/thumbnails/default.jpg',
     )
     gender = models.CharField(max_length=1)
+
+    def __unicode__(self):
+        return self.user.get_full_name()
 
 class UserStatistics(models.Model):
     user = models.OneToOneField(User, primary_key=True)
@@ -23,6 +26,9 @@ class UserStatistics(models.Model):
     agrees_in = models.IntegerField(default=0)
     thanks_out = models.IntegerField(default=0)
     thanks_in = models.IntegerField(default=0)
+
+    def __unicode__(self):
+        return "%s: %s" % (self.user.get_full_name(), self.karma)
 
 class KarmaUser(User):
     class Meta:
