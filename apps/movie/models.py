@@ -74,5 +74,6 @@ Movie.objects.create(item=Item(),...)
 """
 @receiver(post_save, sender=Movie)
 def create_item(sender, instance, created, **kwargs):
-    instance.item.save()
+    if created:
+        instance.item.save()
 
