@@ -1,6 +1,8 @@
 from django.db import models
 from django.template.defaultfilters import slugify
 from item.models import Item
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 class Genre(models.Model):
     name = models.CharField(max_length=50)
@@ -65,4 +67,12 @@ class Movie(models.Model):
         super(Movie, self).save(*args, **kwargs)
 
     # Need to implement permalink
+
+"""
+Saves the item when using the following command:
+Movie.objects.create(item=Item(),...)
+"""
+@receiver(post_save, sender=Movie)
+def create_item(sender, instance, created, **kwargs):
+    instance.item.save()
 
