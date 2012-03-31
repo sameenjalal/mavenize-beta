@@ -1,16 +1,21 @@
-"""
-This file demonstrates writing tests using the unittest module. These will pass
-when you run "manage.py test".
+from django.contrib.auth.models import User
+from user_profile.models import KarmaUser
+from user_profile.models import UserStatistics
+import nose.tools as nt
 
-Replace this with more appropriate tests for your application.
-"""
+class TestUserProfile(object):
+    def setup(self):
+        self.user = User.objects.create(username='a')
+        self.karmauser = KarmaUser.objects.create(username='b')
 
-from django.test import TestCase
+    def test_create_user(self):
+        nt.assert_true(self.user.get_profile())
+        nt.assert_true(UserStatistics.objects.get(pk=self.user.pk))
 
+    def test_create_karma_user(self):
+        nt.assert_true(self.karmauser.get_profile())
+        nt.assert_true(self.karmauser.get_statistics())
 
-class SimpleTest(TestCase):
-    def test_basic_addition(self):
-        """
-        Tests that 1 + 1 always equals 2.
-        """
-        self.assertEqual(1 + 1, 2)
+    def teardown(self):
+        self.user.delete()
+        self.karmauser.delete()

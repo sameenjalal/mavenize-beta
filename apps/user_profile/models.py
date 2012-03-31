@@ -1,6 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models.signals import post_delete
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, primary_key=True)
@@ -48,3 +51,20 @@ class KarmaUser(User):
                 raise ObjectDoesNotExist 
         return self._statistics_cache
 
+@receiver(post_save, sender=User)
+def create_user(sender, instance, created, **kwargs):
+    """
+    Create a user profile and user statistics for this user.
+    """
+    if created:
+        UserProfile.objects.create(user=instance)
+        UserStatistics.objects.create(user=instance)
+
+@receiver(post_save, sender=KarmaUser)
+def create_karma_user(sender, instance, created, **kwargs):
+    """
+    Create a user profile and user statistics for this user.
+    """
+    if created:
+        UserProfile.objects.create(user=instance)
+        UserStatistics.objects.create(user=instance)
