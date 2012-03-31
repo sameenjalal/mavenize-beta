@@ -313,6 +313,8 @@ apps_list = [
         'social_graph',
         'user_profile',
 
+        'movie',
+
         'nexus',
         'social_auth',
         'south',
