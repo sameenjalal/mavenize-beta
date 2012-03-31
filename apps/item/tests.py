@@ -1,16 +1,17 @@
-"""
-This file demonstrates writing tests using the unittest module. These will pass
-when you run "manage.py test".
+from item.models import Item
+from item.models import Popularity
+import nose.tools as nt
 
-Replace this with more appropriate tests for your application.
-"""
+class TestItem(object):
+    def setup(self):
+        self.item = Item.objects.create()
 
-from django.test import TestCase
+    def test_create_item(self):
+        nt.assert_true(Popularity.objects.get(pk=self.item.id))
 
+    def test_delete_item(self):
+        Item.objects.get(pk=self.item.id).delete()
+        nt.assert_false(Popularity.objects.filter(pk=self.item.id))
 
-class SimpleTest(TestCase):
-    def test_basic_addition(self):
-        """
-        Tests that 1 + 1 always equals 2.
-        """
-        self.assertEqual(1 + 1, 2)
+    def teardown(self):
+        Item.objects.filter(pk=self.item.id).delete()

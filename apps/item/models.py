@@ -47,6 +47,7 @@ class Popularity(models.Model):
         return str(self.alltime)
 
 @receiver(post_save, sender=Item)
-def create_popularity(sender, instance, created, **kwargs):
+def create_item(sender, instance, created, **kwargs):
     if created:
         Popularity.objects.create(item=instance)
+
