@@ -15,6 +15,8 @@ class Review(models.Model):
     item = models.ForeignKey(Item)
     text = models.TextField()
     rating = models.SmallIntegerField(choices=RATING_CHOICES)
+    agrees = models.IntegerField(default=0)
+    thanks = models.IntegerField(default=0)
      
     def __unicode__(self):
         return "%s reviewing Item #%s" % (self.user.get_full_name(),
@@ -40,12 +42,13 @@ class Thank(models.Model):
 
 @receiver(post_save, sender=Review)
 def create_review(sender, instance, created, **kwargs):
+    """
+    Increment the user's reviews by one and karma by five.
+    Increment the item's ratings by the review's rating.
+    """
     if created:
-        # Increment the user's review count by one and karma by five
         UserStatistics.objects.filter(pk__exact=instance.user_id).update(
             reviews=F('reviews')+1, karma=F('karma')+5)
-        
-        # Increment the review's rating by one
         ratings = ['one', 'two', 'three', 'four', 'five']
         field = ratings[instance.rating-1] + '_star'
         setattr(instance.item, field, F(field)+1)
@@ -53,10 +56,40 @@ def create_review(sender, instance, created, **kwargs):
 
 @receiver(post_delete, sender=Review)
 def delete_review(sender, instance, **kwargs):
+    """
+    Undo the updates when the review was created.
+    """
     UserStatistics.objects.filter(pk__exact=instance.user_id).update(
         reviews=F('reviews')-1, karma=F('karma')-5)
-
     ratings = ['one', 'two', 'three', 'four', 'five']
     field = ratings[instance.rating-1] + '_star'
     setattr(instance.item, field, F(field)-1)
     instance.item.save()
+
+@receiver(post_save, sender=Agree)
+def create_agree(sender, instance, created, **kwargs):
+    """
+    Increment the giver's agrees by one and karma by one.
+    Increment the receiver's agrees by one and karma by two.
+    """
+    if created:
+        UserStatistics.objects.filter(
+            pk__exact=instance.giver_id).update(
+                agrees_out=F('agrees_out')+1, karma=F('karma')+1)
+        UserStatistics.objects.filter(
+            pk__exact=instance.review.user_id).update(
+                agrees_in=F('agrees_in')+1, karma=F('karma')+2)
+        instance.review.agrees = F('agrees') + 1
+
+@receiver(post_delete, sender=Agree)
+def delete_agree(sender, instance, **kwargs):
+    """
+    Undo the updates when the agree was created.
+    """
+    UserStatistics.objects.filter(
+        pk__exact=instance.giver_id).update(
+            agrees_out=F('agrees_out')-1, karma=F('karma')-1)
+    UserStatistics.objects.filter(
+        pk__exact=instance.review.user_id).update(
+            agrees_in=F('agrees_in')-1, karma=F('karma')-2)
+    instance.review.agrees = F('agrees') - 1
