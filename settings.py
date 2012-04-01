@@ -134,7 +134,11 @@ ADMIN_MEDIA_PREFIX = '/static/admin/'
 ROOT_URLCONF = 'urls'
 STATIC_ROOT = path(ROOT, 'static')
 STATIC_URL = '/static/'
-STATICFILES_FINDERS = ('django.contrib.staticfiles.finders.AppDirectoriesFinder',)
+STATICFILES_DIRS = (path(ROOT, 'assets'),)
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+)
 
 # Version Information
 
