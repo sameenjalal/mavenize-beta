@@ -17,6 +17,8 @@ class Review(models.Model):
     rating = models.SmallIntegerField(choices=RATING_CHOICES)
     agrees = models.IntegerField(default=0)
     thanks = models.IntegerField(default=0)
+    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
      
     def __unicode__(self):
         return "%s reviewing Item #%s" % (self.user.get_full_name(),
