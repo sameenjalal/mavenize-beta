@@ -26,6 +26,10 @@ footer #footer-floor p, footer #footer-floor a {
   font-size: 13px;
 }
 
+footer #footer-floor{
+  background: #1b1b1b;
+}
+
 footer #footer-floor p {
   color: #8f8f8f;
 }
