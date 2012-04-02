@@ -1,9 +1,13 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models.signals import post_delete
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+
+from social_auth.signals import pre_update
+from social_auth.backends.facebook import FacebookBackend
+from social_auth.models import UserSocialAuth
+import facebook
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, primary_key=True)
@@ -51,20 +55,45 @@ class KarmaUser(User):
                 raise ObjectDoesNotExist 
         return self._statistics_cache
 
-@receiver(post_save, sender=User)
-def create_user(sender, instance, created, **kwargs):
-    """
-    Create a user profile and user statistics for this user.
-    """
-    if created:
-        UserProfile.objects.create(user=instance)
-        UserStatistics.objects.create(user=instance)
+@receiver(pre_update, sender=FacebookBackend)
+def update_user_profile(sender, user, response, details, **kwargs):
+    profile, created = UserProfile.objects.get_or_create(user=user)
+    statistics, created = UserStatistics.objects.get_or_create(
+        user=user)
 
-@receiver(post_save, sender=KarmaUser)
-def create_karma_user(sender, instance, created, **kwargs):
-    """
-    Create a user profile and user statistics for this user.
-    """
-    if created:
-        UserProfile.objects.create(user=instance)
-        UserStatistics.objects.create(user=instance)
+    if "id" in response:
+        from urllib2 import urlopen, HTTPError
+        from django.template.defaultfilters import slugify
+        from django.core.files.base import ContentFile
+
+        try:
+            url = "http://graph.facebook.com/%s/picture" \
+                % response["id"]
+            avatar = urlopen(url+'?type=large', timeout=15)
+            thumbnail = urlopen(url, timeout=15)
+            profile.avatar.save(slugify(user.id + 'a') + u'.jpg',
+                ContentFile(avatar.read()))
+            profile.thumbnail.save(slugify(user.id + 't') + u'.jpg',
+                ContentFile(thumbnail.read()))
+        except HTTPError:
+            pass
+    
+    return True
+
+#@receiver(post_save, sender=User)
+#def create_user(sender, instance, created, **kwargs):
+#    """
+#    Create a user profile and user statistics for this user.
+#    """
+#    if created:
+#        UserProfile.objects.create(user=instance)
+#        UserStatistics.objects.create(user=instance)
+#
+#@receiver(post_save, sender=KarmaUser)
+#def create_karma_user(sender, instance, created, **kwargs):
+#    """
+#    Create a user profile and user statistics for this user.
+#    """
+#    if created:
+#        UserProfile.objects.create(user=instance)
+#        UserStatistics.objects.create(user=instance)
