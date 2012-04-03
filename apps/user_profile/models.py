@@ -7,6 +7,7 @@ from django.dispatch import receiver
 from social_auth.signals import pre_update
 from social_auth.backends.facebook import FacebookBackend
 from social_auth.models import UserSocialAuth
+
 import facebook
 
 class UserProfile(models.Model):
@@ -16,7 +17,7 @@ class UserProfile(models.Model):
         default='img/users/avatars/default.jpg',
     )
     thumbnail = models.ImageField(
-        upload_to='img/users',
+        upload_to='img/users/thumbnails',
         default='img/users/thumbnails/default.jpg',
     )
     gender = models.CharField(max_length=1)
@@ -71,10 +72,10 @@ def update_user_profile(sender, user, response, details, **kwargs):
                 % response["id"]
             avatar = urlopen(url+'?type=large', timeout=15)
             thumbnail = urlopen(url, timeout=15)
-            profile.avatar.save(slugify(user.id + 'a') + u'.jpg',
+            profile.avatar.save(slugify(str(user.id) + 'a') + '.jpg',
                 ContentFile(avatar.read()))
-            profile.thumbnail.save(slugify(user.id + 't') + u'.jpg',
-                ContentFile(thumbnail.read()))
+            profile.thumbnail.save(slugify(str(user.id) + 't') + \
+                '.jpg', ContentFile(thumbnail.read()))
         except HTTPError:
             pass
     
