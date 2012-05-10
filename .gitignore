@@ -1,6 +1,8 @@
 *.py[co]
 *.sw[op]
 
+/build
 /env
+/media
 /static
-db
+/db

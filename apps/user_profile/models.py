@@ -21,6 +21,10 @@ class UserProfile(models.Model):
         default='img/users/thumbnails/default.jpg',
     )
     gender = models.CharField(max_length=1)
+    about_me = models.CharField(max_length=80, default='')
+
+    class Meta:
+        verbose_name_plural = "User Profiles"
 
     def __unicode__(self):
         return self.user.get_full_name()
@@ -35,6 +39,9 @@ class UserStatistics(models.Model):
     agrees_in = models.IntegerField(default=0)
     thanks_out = models.IntegerField(default=0)
     thanks_in = models.IntegerField(default=0)
+
+    class Meta:
+        verbose_name_plural = "User Statistics"
 
     def __unicode__(self):
         return "%s: %s" % (self.user.get_full_name(), self.karma)
@@ -71,8 +78,8 @@ def update_user_profile(sender, user, response, details, **kwargs):
         try:
             url = ("http://graph.facebook.com/%s/picture" %         
                 response["id"])
-            avatar = urlopen(url+'?type=large', timeout=15).read()
-            thumbnail = urlopen(url, timeout=15).read()
+            avatar = urlopen(url+'?type=large', timeout=30).read()
+            thumbnail = urlopen(url, timeout=30).read()
             if not created:
                 if (hashlib.sha1(profile.thumbnail.read()).digest()
                         != hashlib.sha1(thumbnail).digest()):
@@ -100,20 +107,11 @@ def update_user_profile(sender, user, response, details, **kwargs):
     
     return True
 
-#@receiver(post_save, sender=User)
-#def create_user(sender, instance, created, **kwargs):
-#    """
-#    Create a user profile and user statistics for this user.
-#    """
-#    if created:
-#        UserProfile.objects.create(user=instance)
-#        UserStatistics.objects.create(user=instance)
-#
-#@receiver(post_save, sender=KarmaUser)
-#def create_karma_user(sender, instance, created, **kwargs):
-#    """
-#    Create a user profile and user statistics for this user.
-#    """
-#    if created:
-#        UserProfile.objects.create(user=instance)
-#        UserStatistics.objects.create(user=instance)
+@receiver(post_save, sender=KarmaUser)
+def create_karma_user(sender, instance, created, **kwargs):
+    """
+    Create a user profile and user statistics for this user.
+    """
+    if created:
+        UserProfile.objects.create(user=instance)
+        UserStatistics.objects.create(user=instance)
