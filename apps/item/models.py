@@ -12,7 +12,6 @@ class Item(models.Model):
     one_star = models.IntegerField(default=0)
     reviews = models.IntegerField(default=0)
     bookmarks = models.IntegerField(default=0)
-    bookmarks_active = models.IntegerField(default=0)
 
     def __unicode__(self):
         return str(self.id)

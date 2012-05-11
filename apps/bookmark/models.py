@@ -6,15 +6,13 @@ from django.dispatch import receiver
 from django.db.models import F
 
 from item.models import Item
-from notification.models import Notification
-from user_profile.models import UserStatistics
-from bookmark.signals import state_changed
+
+import api
+
 
 class Bookmark(models.Model):
     user = models.ForeignKey(User)
     item = models.ForeignKey(Item)
-    is_public = models.BooleanField(default=True)
-    is_done = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -22,89 +20,50 @@ class Bookmark(models.Model):
         return "%s bookmarking Item #%s" % (self.user.get_full_name(),
             self.item.id)
 
-    def save(self, *args, **kwargs):
-        # Check to see if the bookmark's active status has been changed
-        if (self.id):
-            old = Bookmark.objects.get(pk=self.id)
-            if not old.is_done == self.is_done:
-                state_changed.send(sender=Bookmark, 
-                    instance=self, is_done=self.is_done)
-        super(Bookmark, self).save(*args, **kwargs)
 
-@receiver(state_changed, sender=Bookmark)
-def change_bookmark(sender, instance, is_done, **kwargs):
-    """
-    Decrement the user and item's active bookmarks by one if the bookmark
-    is marked done.
-    Increment the user and item's active bookmarks by one if the bookmark
-    is marked undone.
-    """
-    if is_done:
-        UserStatistics.objects.filter(
-            pk__exact=instance.user_id).update(
-                bookmarks_active=F('bookmarks_active')-1)
-        instance.item.bookmarks_active = F('bookmarks_active') - 1
-    else:
-        UserStatistics.objects.filter(
-            pk__exact=instance.user_id).update(
-                bookmarks_active=F('bookmarks_active')+1)
-        instance.item.bookmarks_active = F('bookmarks_active') + 1
-    instance.item.save()
+class BookmarkGroup(models.Model):
+    user = models.ForeignKey(User)
+    name = models.CharField(max_length=255)
+    bookmarks = models.ManyToManyField(Bookmark)
+    is_public = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __unicode__(self):
+        return "'%s' owned by: %s" % (self.name,
+            self.user.get_full_name())
+
 
 @receiver(post_save, sender=Bookmark)
 def create_bookmark(sender, instance, created, **kwargs):
     """
-    Create a notification for the user's friends.
-    Increment the user and item's bookmarks by one and active bookmarks
-    by one if it is active.
-    Increment the user's and item's bookmarks by one if the bookmark is
-    not active.
+    Increment the user and item's bookmarks by one.
     """
     if created:
-        Notification.objects.create(
-            sender_id=instance.user_id,
-            recipient_id=0,
-            notice_object=instance
+        api.update_statistics(
+            model_name="userstatistics",
+            obj_id=instance.user_id,
+            bookmarks=1
         )
-        if instance.is_done:
-            UserStatistics.objects.filter(
-                pk__exact=instance.user_id).update(
-                    bookmarks=F('bookmarks')+1)
-        else:
-            UserStatistics.objects.filter(
-                pk__exact=instance.user_id).update(
-                    bookmarks=F('bookmarks')+1,
-                    bookmarks_active=F('bookmarks_active')+1
-                )
-            instance.item.bookmarks_active = F('bookmarks_active') + 1
-        instance.item.bookmarks = F('bookmarks') + 1
-        instance.item.save()
+        api.update_statistics(
+            model_name="item",
+            obj_id=instance.item_id,
+            bookmarks=1
+        )
+
 
 @receiver(post_delete, sender=Bookmark)
 def delete_bookmark(sender, instance, **kwargs):
     """
     Undo the updates of the bookmark.
     """
-    try:
-        Notification.objects.get(
-            sender_id=instance.user_id,
-            recipient_id=0,
-            object_id=instance.id
-        ).delete()
-    except:
-        pass
-
-    if instance.is_done:
-        UserStatistics.objects.filter(
-            pk__exact=instance.user_id).update(
-                bookmarks=F('bookmarks')-1)
-    else:
-        UserStatistics.objects.filter(
-            pk__exact=instance.user_id).update(
-                bookmarks=F('bookmarks')-1,
-                bookmarks_active=F('bookmarks_active')-1
-            )
-        instance.item.bookmarks_active = F('bookmarks_active') - 1
-    instance.item.bookmarks = F('bookmarks') - 1
-    instance.item.save()
-
+    api.update_statistics(
+        model_name="userstatistics",
+        obj_id=instance.user_id,
+        bookmarks=-1
+    )
+    api.update_statistics(
+        model_name="item",
+        obj_id=instance.item_id,
+        bookmarks=-1
+    )

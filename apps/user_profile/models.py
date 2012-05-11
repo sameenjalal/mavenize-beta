@@ -34,7 +34,6 @@ class UserStatistics(models.Model):
     karma = models.IntegerField(default=0)
     reviews = models.IntegerField(default=0)
     bookmarks = models.IntegerField(default=0)
-    bookmarks_active = models.IntegerField(default=0)
     agrees_out = models.IntegerField(default=0)
     agrees_in = models.IntegerField(default=0)
     thanks_out = models.IntegerField(default=0)
