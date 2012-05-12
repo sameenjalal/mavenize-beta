@@ -273,6 +273,9 @@ def follow(source_id, destination_id):
         source_id: user id of the source (integer)
         destination_id: user id of the destination (integer)
     """
+    if source_id == destination_id:
+        return "You can't follow yourself!"
+
     Forward.objects.get_or_create(source_id=source_id,
                                   destination_id=destination_id)
     Backward.objects.get_or_create(destination_id=destination_id,
