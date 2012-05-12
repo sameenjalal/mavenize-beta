@@ -302,7 +302,53 @@ def review(user_id, item_id, text, rating):
     if form.is_valid():
         form.save()
         return True
+    return False
 
+
+def agree(user_id, review_id):
+    """
+    Creates an agree for a review if the user has previously not
+    agreed with the review and the user is not the writer of the
+    review.  Returns True if the agree has been created successfully
+    and False otherwise.
+        user_id: id of the agreer (integer)
+        review_id: id of the review (integer)
+    """
+    review = Review.objects.get(pk=review_id)
+    if user_id == review.user_id:
+        return False
+
+    agree, created = Agree.objects.get_or_create(
+        giver=User.objects.get(pk=user_id),
+        review=review
+    )
+    if created:
+        return True
+    return False
+
+
+def thank(user_id, review_id, note):
+    """
+    Creates a thank for a review if the user has previously not
+    thanked the review and the user is not the writer of the
+    review.  Returns True if the agree has been created successfully
+    and False otherwise.
+        user_id: id of the thanker (integer)
+        review_id: id of the review (integer)
+        note: thank you note (string)
+    """
+    if (Thank.objects.filter(giver=user_id, review=review_id) or
+            user_id == Review.objects.get(pk=review_id).user_id):
+        return False
+    
+    form = ThankForm({
+        'giver': user_id,
+        'review': review_id,
+        'note': note
+    })
+    if form.is_valid():
+        form.save()
+        return True
     return False
 
 """

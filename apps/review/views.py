@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import get_model
 
 from review.models import Agree, Review, Thank, ReviewForm, ThankForm
+import api
 
 @login_required
 def review(request, title, app, model):
@@ -21,9 +22,9 @@ def review(request, title, app, model):
 @login_required
 def agree(request, review_id):
     if request.method == 'POST':
-        Agree.objects.get_or_create(
-            giver=request.user,
-            review=Review.objects.get(pk=review_id)
+        api.agree(
+            user_id=request.session['_auth_user_id'],
+            review_id=review_id
         )
 
     return redirect(request.META.get('HTTP_REFERER', None))
@@ -31,34 +32,22 @@ def agree(request, review_id):
 @login_required
 def disagree(request, review_id):
     if request.method == 'POST':
-        review = {
-            'user': request.session['_auth_user_id'],
-            'item': get_object_or_404(Review, pk=review_id).item_id,
-            'text': request.POST['text'],
-            'rating': int(request.POST['rating']),
-            'agrees': 0,
-            'thanks': 0
-        }
-        form = ReviewForm(review)
-        if (form.is_valid() and not
-                Review.objects.filter(user=review['user'],
-                                      item=review['item'])):
-            form.save()
+        api.review(
+            user_id=request.session['_auth_user_id'],
+            item_id=get_object_or_404(Review, pk=review_id).item_id,
+            text=request.POST['text'],
+            rating=int(request.POST['rating'])
+        )
 
     return redirect(request.META.get('HTTP_REFERER', None))
 
 @login_required
 def thank(request, review_id):
     if request.method == 'POST':
-        thank = {
-            'giver': request.session['_auth_user_id'],
-            'review': review_id,
-            'note': request.POST['text']
-        }
-        form = ThankForm(thank)
-        if (form.is_valid() and not 
-                Thank.objects.filter(giver=thank['giver'],
-                                     review=thank['review'])):
-            form.save()
+        api.thank(
+            user_id=request.session['_auth_user_id'],
+            review_id=review_id,
+            note=request.POST['text']
+        )
 
     return redirect(request.META.get('HTTP_REFERER', None))
