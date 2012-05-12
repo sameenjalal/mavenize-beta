@@ -45,15 +45,19 @@ $(document).ready(function() {
     </div>");
 
   // Helper Functions
-  var disagreeUrl = function(reviewId) {
+  var getReraveUrl = function(reviewId) {
+    return '/rerave/' + reviewId + '/';
+  }
+
+  var getDisagreeUrl = function(reviewId) {
     return '/disagree/' + reviewId + '/';
   }
 
-  var thankUrl = function(reviewId) {
+  var getThankUrl = function(reviewId) {
     return '/thank/' + reviewId + '/';
   }
 
-  var smileyUrl = function(rating) {
+  var getSmileyUrl = function(rating) {
     return STATIC_URL + 'img/' + rating + 's.png';
   }
 
@@ -62,17 +66,38 @@ $(document).ready(function() {
     selectedReview = $(this).closest('.review').val();
   });
 
+  $('a[href="#re-rave"]').click(function() {
+    $.ajax({
+      type: 'POST',
+      url: getReraveUrl(selectedReview),
+      data: { csrfmiddlewaretoken: CSRF_TOKEN },
+      success: function() {
+        $(this).remove();
+      }
+    });
+  });
+
   $('.activities').bind('appended', function() {
     $('a[data-toggle="modal"]').click(function() {
       selectedReview = $(this).closest('.activity').val();
+    });
+    $('a[href="#re-rave"]').click(function() {
+      $.ajax({
+        type: 'POST',
+        url: getReraveUrl(selectedReview),
+        data: { csrfmiddlewaretoken: CSRF_TOKEN },
+        success: function() {
+          $(this).remove();
+        }
+      });
     });
   });
 
   $('#disagree').on('show', function() {
     var form = raveTemplate({
-      postUrl: disagreeUrl(selectedReview),
+      postUrl: getDisagreeUrl(selectedReview),
       csrfField: CSRF_FIELD,
-      smileyUrls: [smileyUrl(1), smileyUrl(2), smileyUrl(3), smileyUrl(4)]
+      smileyUrls: [getSmileyUrl(1), getSmileyUrl(2), getSmileyUrl(3), getSmileyUrl(4)]
     });
     $(this).append(form);
     $('#modal-text').elastic();
@@ -82,7 +107,7 @@ $(document).ready(function() {
 
   $('#thank').on('show', function() {
     var form = thankTemplate({
-      postUrl: thankUrl(selectedReview),
+      postUrl: getThankUrl(selectedReview),
       csrfField: CSRF_FIELD,
     });
     $(this).append(form);

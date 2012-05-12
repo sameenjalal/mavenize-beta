@@ -29,7 +29,7 @@ def review(request, title, app, model):
 def agree(request, review_id):
     if request.method == 'POST':
         Agree.objects.get_or_create(
-            giver=User.objects.get(pk=request.session['_auth_user_id']),
+            giver=request.user,
             review=Review.objects.get(pk=review_id)
         )
 

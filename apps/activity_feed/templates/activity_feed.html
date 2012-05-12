@@ -109,6 +109,7 @@
   <script type="text/javascript">
     var STATIC_URL = "{{ STATIC_URL }}";
     var CSRF_FIELD = "{% csrf_token %}";
+    var CSRF_TOKEN = "{{ csrf_token }}";
   </script>
   <script type="text/javascript" src="{{ STATIC_URL }}js/activityFeed.js"></script>
   <script type="text/javascript" src="{{ STATIC_URL }}js/vendor/django.csrf.js"></script>
