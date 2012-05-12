@@ -1,11 +1,10 @@
 <li class="review" value="{{ agree.review_id }}">
-  <div class="pull-left">
-    <div class="user-avatar">
+  <div class="user-avatar pull-left">
       {% load thumbnail %}
       {% thumbnail agree.review.user.userprofile.avatar "100x100" crop="center" as im %}
       <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" />
       {% endthumbnail %}
-    </div>
+      <img src="{{ STATIC_URL }}img/{{ review.rating }}l.png" />
   </div>
   <div class="review-context">
     <a href="{% url user_profile.views.profile agree.giver_id %}">

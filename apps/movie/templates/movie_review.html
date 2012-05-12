@@ -1,11 +1,10 @@
 <li class="review" value="{{ review.pk }}">
-  <div class="pull-left">
-    <div class="user-avatar">
-      {% load thumbnail %}
-      {% thumbnail review.user.userprofile.avatar "100x100" crop="center" as im %}
-      <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" />
-      {% endthumbnail %}
-    </div>
+  <div class="user-avatar pull-left">
+    {% load thumbnail %}
+    {% thumbnail review.user.userprofile.avatar "100x100" crop="center" as im %}
+    <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" />
+    {% endthumbnail %}
+    <img src="{{ STATIC_URL }}img/{{ review.rating }}l.png" />
   </div>
   <div class="review-context">
     <a href="{% url user_profile.views.profile review.user_id %}">
