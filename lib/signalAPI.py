@@ -116,8 +116,8 @@ def queue_notification(sender_id, recipient_id, model_name, obj_id):
     model = get_model(MODEL_APP_NAME[model_name], model_name)
     try:
         Notification.objects.create(
-            sender_id=sender_id,
-            recipient_id=recipient_id,
+            sender=User.objects.get(pk=sender_id),
+            recipient=User.objects.get(pk=recipient_id),
             notice_object=model.objects.get(pk=obj_id)
         )
     except ObjectDoesNotExist:
@@ -220,8 +220,8 @@ def remove_notification(sender_id, recipient_id, model_name, obj_id):
         obj_id: object.pk
     """
     Notification.objects.get(
-        sender_id=sender_id,
-        recipient_id=recipient_id,
+        sender=sender_id,
+        recipient=recipient_id,
         content_type=ContentType.objects.get(
             app_label=MODEL_APP_NAME[model_name],
             model=model_name),

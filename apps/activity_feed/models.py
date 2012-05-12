@@ -4,7 +4,8 @@ from django.contrib.contenttypes import generic
 from django.contrib.auth.models import User
 
 class Activity(models.Model):
-    sender = models.ForeignKey(User)
+    sender = models.ForeignKey(User,
+        related_name="activities_sent")
     verb = models.CharField(max_length=30)
     content_type = models.ForeignKey(ContentType)
     object_id = models.IntegerField()

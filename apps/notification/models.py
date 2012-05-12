@@ -1,10 +1,13 @@
 from django.db import models
+from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
 class Notification(models.Model):
-    sender = models.ForeignKey(User)
-    recipient = models.ForeignKey(User)
+    sender = models.ForeignKey(User,
+        related_name="notifications_sent")
+    recipient = models.ForeignKey(User,
+        related_name="notifications_received")
     content_type = models.ForeignKey(ContentType)
     object_id = models.IntegerField()
     notice_object = generic.GenericForeignKey('content_type',
