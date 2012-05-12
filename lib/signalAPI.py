@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
+from django.core.cache import get_cache
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import get_model, F
 
@@ -24,6 +25,8 @@ MODEL_APP_NAME = {
     'activity': 'activity_feed',
     'notification': 'notification'
 }
+
+notifications_cache = get_cache('notifications')
 
 """
 GET METHODS
@@ -107,6 +110,7 @@ def queue_activity(sender_id, verb, model_name, obj_id):
 def queue_notification(sender_id, recipient_id, model_name, obj_id):
     """
     Adds a notification for an agree, thanks, bookmark, or follow.
+    Increments the notification count in the cache.
         sender_id: agree.giver_id, thank.giver_id, bookmark.user_id,
             or backward.source_id
         recipient_id: agree.review.user_id, thank.review.user_id,
@@ -121,6 +125,10 @@ def queue_notification(sender_id, recipient_id, model_name, obj_id):
             recipient=User.objects.get(pk=recipient_id),
             notice_object=model.objects.get(pk=obj_id)
         )
+        key = "user:" + str(recipient_id) + ":new"
+        if not notifications_cache.get(key):
+            notifications_cache.set(key, 0)
+        notifications_cache.incr(key)
     except ObjectDoesNotExist:
         pass
 
