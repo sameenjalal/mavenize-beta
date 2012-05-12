@@ -81,7 +81,7 @@ if is_solo() or is_dev():
         'default': {
             'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
         },
-        'redis': {
+        'notifications': {
             'BACKEND': 'redis_cache.cache.ShardedRedisCache',
             'LOCATION': ['127.0.0.1:6379:1'],
         }
