@@ -15,7 +15,7 @@
     <a href="{% url movie.views.profile movie.url %}">{{ movie.title }}</a>.
   </div>
   <div class="review-text">
-    {{ review.text }}
+    {{ review.text|linebreaks }}
   </div>
   <div class="review-meta">
     <div class="pull-left">

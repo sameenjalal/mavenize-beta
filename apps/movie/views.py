@@ -6,7 +6,7 @@ from django.db import transaction, IntegrityError
 from django.db.models import Q
 from django.core.urlresolvers import reverse
 from django.utils import simplejson
-from django.utils.html import escape
+from django.utils.html import escape, linebreaks
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.core import serializers
 

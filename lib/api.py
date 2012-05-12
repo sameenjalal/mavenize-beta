@@ -4,7 +4,7 @@ from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.core.urlresolvers import reverse
 from django.db.models import Sum
 from django.utils import simplejson
-from django.utils.html import escape
+from django.utils.html import escape, linebreaks
 from django.utils.timesince import timesince
 
 from activity_feed.models import Activity
@@ -98,7 +98,7 @@ def get_user_activity(user_ids, page):
                                          .get_full_name(),
         'target_user_first_name': activity.target_object.user \
                                           .first_name.lower(),
-        'text': escape(activity.target_object.text),
+        'text': linebreaks(escape(activity.target_object.text)),
         'time_since': timesince(activity.created_at),
         'next': next_page 
     } for activity in activities]
