@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block title %}
-  Mavenize | {{ user.get_full_name }} 
+  Mavenize | My Profile 
 {% endblock %}
 
 {% block body %}
@@ -43,23 +43,21 @@
       <section id="modals">
         <div class="modal fade" id="disagree"></div>
         <div class="modal fade" id="thank"></div>
+        <div class="modal fade" id="edit"></div>
       </section>
     </div>
     <div id="sidebar" class="span3">
       <div class="thumbnail">
         <img src="{{ user.userprofile.avatar.url }}" />
       </div>
-      <div id="user-interaction">
-        <button id="sidebar-follow" class="btn btn-large {%if is_following %}btn-warning{% else %}btn-success{% endif %} btn-follow" value="{{ user.id }}">
-        {% if is_following %}
-          Unfollow
-        {% else %}
-          Follow
-        {% endif %}
-        </button>
-      </div>
       <div id="user-about" class="module-container border">
-        <h3 class="heading">About {{ user.first_name }}</h3>
+        <h3 class="heading">
+          <div style="float: left;">About Me</div>
+          <div style="float: right;">
+            <a href="#edit"><img src="{{ STATIC_URL }}img/edit.png"</a>
+          </div>
+          <div style="clear: both;"></div>
+        </h3>
         <p id="about-me">{{ user.userprofile.about_me }}<p>
         <table id="stats-table" class="table">
           <thead>
@@ -97,7 +95,6 @@
 {% block js %}
   <script type="text/javascript">
     var STATIC_URL = "{{ STATIC_URL }}";
-    var CSRF_FIELD = "{% csrf_token %}";
     var CSRF_TOKEN = "{{ csrf_token }}"; 
   </script>
   <script type="text/javascript">

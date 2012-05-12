@@ -6,9 +6,22 @@ from django.contrib.auth.decorators import login_required
 import api
 
 @login_required
+def my_profile(request):
+    me = request.session['_auth_user_id']
+    context = {
+        'user': api.get_profile(me)
+    }
+
+    return render_to_response("my_profile.html", context,
+        RequestContext(request))
+
+@login_required
 def profile(request, user_id):
+    me = request.session['_auth_user_id'] 
+    if int(user_id) == me:
+        return my_profile(request)
+
     try:
-        me = request.session['_auth_user_id']
         context = {
             'user': api.get_profile(user_id),
             'is_following': api.is_following(me, user_id)

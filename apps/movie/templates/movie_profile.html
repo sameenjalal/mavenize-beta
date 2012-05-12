@@ -135,7 +135,7 @@
 {% block js %}
   <script type="text/javascript">
     var STATIC_URL = "{{ STATIC_URL }}";
-    var CSRF_TOKEN = "{% csrf_token %}"; 
+    var CSRF_FIELD = "{% csrf_token %}";
   </script>
   <script type="text/javascript">
     $(document).ready(function() {

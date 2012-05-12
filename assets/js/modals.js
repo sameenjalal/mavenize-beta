@@ -5,96 +5,88 @@ $(document).ready(function() {
   var selectedReview;
   $('.modal').hide();
 
-  // Helper Functions
-  var createHeader = function(modalElement, header) {
-    $(modalElement).append($('<div/>', { class: "modal-header" }));
-    $(modalElement).find('.modal-header').append(
-        $('<a/>', { class: "close", "data-dismiss": "modal"}).text('×'));
-    $(modalElement).find('.modal-header').append(
-        $('<h3/>').text(header));
-  };
+  // Templates
+  var raveTemplate = _.template("\
+    <div class='modal-header'>\
+      <a class='close' data-dismiss='modal'>×</a>\
+      <h3>Disagree? Leave your own rave.</h3>\
+    </div>\
+    <div class='modal-body'>\
+      <form class='form-horizontal' action='<%= postUrl %>' method='POST'>\
+        <%= csrfField %>\
+        <textarea id='modal-text' placeholder='Tell us what you thought, choose a rating, and rave!' rows='1' name='text'></textarea>\
+        <div class='btn-group' id='modal-rating' data-toggle='buttons-radio'>\
+          <% for (var i = 0; i < 4; i++) { %>\
+            <button class='btn' type='button' name='rating' value='<%= i %>'>\
+              <img src='<%= smileyUrls[i] %>'/>\
+            </button>\
+          <% } %>\
+        </div>\
+        <button class='btn btn-large btn-primary disabled' id='modal-submit' type='submit' name='rating' value='0' disabled='true'>\
+          Rave\
+        </button>\
+        <div style='clear: both;'></div>\
+      </form>\
+    </div>");
 
-  var createTextArea = function(placeholder) {
-    return $('<textarea>', {
-      "id": "modal-text", "placeholder": placeholder, "rows": "1",
-      "name": "text"
-    });
+  var thankTemplate = _.template("\
+    <div class='modal-header'>\
+      <a class='close' data-dismiss='modal'>×</a>\
+      <h3>Leave a thank you note (optional).</h3>\
+    </div>\
+    <div class='modal-body'>\
+      <form class='form-horizontal' action='<%= postUrl %>' method='POST'>\
+        <%= csrfField %>\
+        <textarea id='modal-text' placeholder='You are awesome because...' rows='1' name='text'></textarea>\
+        <button class='btn btn-large btn-primary' id='modal-submit' type='submit'>\
+          Thank\
+        </button>\
+      </form>\
+    </div>");
+
+  // Helper Functions
+  var disagreeUrl = function(reviewId) {
+    return '/disagree/' + reviewId + '/';
   }
 
-  var createRaveButtons = function() {
-    var ratingGroup = $('<div/>', { 
-        "class": "btn-group",
-        "id": "modal-rating",
-        "data-toggle": "buttons-radio"
-    });
-    for (var i = 1; i < 5; i++) {
-      ratingGroup.append(
-        $('<button/>', {
-            "class": "btn",
-            "type": "button",
-            "name": "rating",
-            "value": i 
-        }).append($('<img/>', {"src": STATIC_URL + "img/" + i + "s.png" })));
-    }
-    var submitButton = $('<button/>', { 
-        "class": "btn btn-large btn-primary disabled",
-        "id": "modal-submit",
-        "type": "submit",
-        "name": "rating",
-        "value": "0",
-        "disabled": "true"
-    }).text("Rave");
+  var thankUrl = function(reviewId) {
+    return '/thank/' + reviewId + '/';
+  }
 
-    return $(ratingGroup).after(submitButton).after(
-      $('<div/>', { "style": "clear: both;" }));
+  var smileyUrl = function(rating) {
+    return STATIC_URL + 'img/' + rating + 's.png';
   }
 
   // Listeners
+  $('.review a[data-toggle="modal"]').click(function() {
+    selectedReview = $(this).closest('.review').val();
+  });
+
   $('.activities').bind('appended', function() {
-    $('div[class$="meta"] a').click(function() {
-      selectedReview = $(this).closest('.activity').val() |
-                       $(this).closest('.review').val();
+    $('a[data-toggle="modal"]').click(function() {
+      selectedReview = $(this).closest('.activity').val();
     });
   });
 
   $('#disagree').on('show', function() {
-    createHeader(this, 'Leave your own rave.');
-    
-    $(this).append($('<div/>', { "class": "modal-body" }));
-    $(this).find('.modal-body').append($('<form/>',{
-        "class": "form-horizontal",
-        "action": "/disagree/" + selectedReview + "/",
-        "method": "POST" 
-    }));
-    $(this).find('form').append(CSRF_TOKEN);
-    $(this).find('form').append(
-      createTextArea("Tell us what you thought, choose a rating, and rave!"));
+    var form = raveTemplate({
+      postUrl: disagreeUrl(selectedReview),
+      csrfField: CSRF_FIELD,
+      smileyUrls: [smileyUrl(1), smileyUrl(2), smileyUrl(3), smileyUrl(4)]
+    });
+    $(this).append(form);
     $('#modal-text').elastic();
-    $(this).find('form').append(createRaveButtons());
     $(this).find('form').ajaxForm();
     $(this).find('form').ratingForm();
   });
 
   $('#thank').on('show', function() {
-    createHeader(this, 'Leave a thank you note (optional).');
-
-    $(this).append($('<div/>', { class: "modal-body" }));
-    $(this).find('.modal-body').append($('<form/>', {
-        "class": "form-horizontal",
-        "action": "/thank/" + selectedReview + "/",
-        "method": "POST" 
-    }));
-    $(this).find('form').append(CSRF_TOKEN);
-    $(this).find('form').append(
-      createTextArea("You're awesome because..."));
+    var form = thankTemplate({
+      postUrl: thankUrl(selectedReview),
+      csrfField: CSRF_FIELD,
+    });
+    $(this).append(form);
     $('#modal-text').elastic();
-
-    $(this).find('form').append($('<button/>', { 
-        "class": "btn btn-large btn-primary",
-        "id": "modal-submit",
-        "type": "submit",
-        "name": "submit" 
-    }).text('Thank'));
     $(this).find('form').ajaxForm();
   });
 
