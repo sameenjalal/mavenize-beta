@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.core.urlresolvers import reverse
@@ -281,15 +282,16 @@ def follow(source_id, destination_id):
 def review(user_id, item_id, text, rating):
     """
     Creates a review for an item if the user has previously not
-    written a review for the item.  Returns True if the review has
-    been created successfully and False otherwise.
+    written a review for the item.  Returns False if the review
+    has been created successfully, otherwise returns an error
+    message.
         user_id: id of the reviewer (integer)
         item_id: id of the item (integer)
         text: text of the review (string)
         rating: rating of the review (integer)
     """
     if Review.objects.filter(user=user_id, item=item_id):
-        return False
+        return "You already wrote a review!"
 
     form = ReviewForm({
         'user': user_id,
@@ -301,45 +303,45 @@ def review(user_id, item_id, text, rating):
     })
     if form.is_valid():
         form.save()
-        return True
-    return False
+        return False
+    return "Something was wrong with the review you submitted!"
 
 
 def agree(user_id, review_id):
     """
     Creates an agree for a review if the user has previously not
     agreed with the review and the user is not the writer of the
-    review.  Returns True if the agree has been created successfully
-    and False otherwise.
+    review.  Returns False if the agree has been created successfully,
+    otherwise returns an error message.
         user_id: id of the agreer (integer)
         review_id: id of the review (integer)
     """
     review = Review.objects.get(pk=review_id)
     if user_id == review.user_id:
-        return False
+        return "You can't re-rave your own review!"
 
     agree, created = Agree.objects.get_or_create(
         giver=User.objects.get(pk=user_id),
         review=review
     )
     if created:
-        return True
-    return False
+        return False
+    return "You already re-raved this review!"
 
 
 def thank(user_id, review_id, note):
     """
     Creates a thank for a review if the user has previously not
     thanked the review and the user is not the writer of the
-    review.  Returns True if the agree has been created successfully
-    and False otherwise.
+    review.  Returns False if the agree has been created successfully,
+    otherwise returns an error message.
         user_id: id of the thanker (integer)
         review_id: id of the review (integer)
         note: thank you note (string)
     """
     if (Thank.objects.filter(giver=user_id, review=review_id) or
             user_id == Review.objects.get(pk=review_id).user_id):
-        return False
+        return "You can't thank your own review!"
     
     form = ThankForm({
         'giver': user_id,
@@ -348,9 +350,9 @@ def thank(user_id, review_id, note):
     })
     if form.is_valid():
         form.save()
-        return True
-    return False
-
+        return False
+    return "You already thanked this review!"
+    
 """
 DELETE METHODS
 """

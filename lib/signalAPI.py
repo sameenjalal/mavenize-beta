@@ -6,7 +6,10 @@ from django.db.models import get_model, F
 from activity_feed.models import Activity
 from notification.models import Notification
 from leaderboard.models import KarmaAction
+from social_auth.models import UserSocialAuth
+from social_graph.models import Forward, Backward
 
+import facebook
 
 MODEL_APP_NAME = {
     'user': 'auth',
@@ -137,10 +140,41 @@ def add_karma_action(recipient_id, giver_id, karma):
     except ObjectDoesNotExist:
         pass
 
+def build_social_graph(user_id):
+    """
+    Uses the user's social graph on Facebook to generate following
+    and follower relationships that don't already exist.
+        user_id: the primary key of the user (integer)
+    """
+    access_token = User.objects.get(pk=user_id) \
+                               .social_auth.get(provider='facebook') \
+                               .extra_data['access_token']
+    graph = facebook.GraphAPI(access_token)
+    friends = graph.get_connections("me", "friends")['data']
+    friend_ids = [friend['id'] for friend in friends]
+    signed_up = UserSocialAuth.objects.filter(uid__in=friend_ids) \
+                                      .values_list('user_id', flat=True)
+    already_following = Forward.objects.filter(source_id=user_id) \
+                                       .values_list('destination_id',
+                                                    flat=True)
+    to_add = list(set(signed_up) - set(already_following))
+    # Need to create notifications for these because bulk_create does not
+    # trigger signals.
+    
+    forward_connections = [Forward(source_id=user_id, destination_id=fid)
+        for fid in to_add]
+    forward_connections += [Forward(source_id=fid, destination_id=user_id)
+        for fid in to_add]
+    backward_connections = [Backward(destination_id=fid, source_id=user_id)
+        for fid in to_add]
+    backward_connections = [Backward(destination_id=user_id, source_id=fid)
+        for fid in to_add]
+    Forward.objects.bulk_create(forward_connections)
+    Backward.objects.bulk_create(backward_connections)
+
 """
 UPDATE METHODS
 """
-
 def update_statistics(model_name, obj_id, **fields):
     """
     Updates the statistics for a user, review or item after a
