@@ -3,9 +3,6 @@ from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 
 from social_auth.signals import socialauth_registered 
-from social_auth.backends.facebook import FacebookBackend
-from social_auth.models import UserSocialAuth
-
 from notification.models import Notification
 
 import signalAPI
