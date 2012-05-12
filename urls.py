@@ -22,6 +22,7 @@ urlpatterns += patterns('haystack.views',
 )
 
 urlpatterns += patterns('user_profile.views',
+    url(r'^me/$', 'my_profile', name='my-profile'),
     url(r'^users/(?P<user_id>\d+)/$', 'profile', name='user-profile'),
 
     url(r'^users/(?P<user_id>\d+)/raves/(?P<page>\d+)/$', 'activity'),

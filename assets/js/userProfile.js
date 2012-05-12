@@ -1,6 +1,6 @@
 $(document).ready(function () {
   // Global Variables
-  var userId = window.location.pathname.match(/\d+/);
+  var userId = USER_ID; 
 
   // Helper Functions
   var getRavesUrl = function(page) {
