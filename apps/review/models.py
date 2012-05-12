@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django.db.models import F
@@ -261,6 +262,10 @@ def delete_agree(sender, instance, **kwargs):
     """
     Undo the updates when the agree was created.
     """
+    try:
+        instance.review
+    except ObjectDoesNotExist:
+        return False
     signalAPI.remove_activity(
         sender_id=instance.giver_id,
         verb="re-raved",
@@ -389,6 +394,10 @@ def delete_thank(sender, instance, **kwargs):
     """
     Undo the updates when the thank was created.
     """
+    try:
+        instance.review
+    except ObjectDoesNotExist:
+        return False
     signalAPI.remove_notification(
         sender_id=instance.giver_id,
         recipient_id=instance.review.user_id,
