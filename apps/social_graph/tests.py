@@ -10,7 +10,7 @@ class TestSocialGraph(object):
         self.follower = KarmaUser.objects.create(username='a')
         self.following = KarmaUser.objects.create(username='b')
 
-    def test_notification(self):
+    def test_following(self):
         """
         Tests to see if a notification was created and deleted after
         a following relationship is created and deleted.
