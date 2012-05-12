@@ -77,8 +77,16 @@ CACHE_MIDDLEWARE_KEY_PREFIX = ''
 # Don't require developers to install memcached, and also make debugging easier
 # because cache is automatically wiped when the server reloads.
 if is_solo() or is_dev():
-    CACHE_BACKEND = ('locmem://?timeout=%(CACHE_TIMEOUT)d'
-            '&max_entries=%(MAX_CACHE_ENTRIES)d' % locals())
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        },
+        'redis': {
+            'BACKEND': 'redis_cache.cache.ShardedRedisCache',
+            'LOCATION': ['127.0.0.1:6379:1'],
+        }
+    }
+
 else:
     CACHE_BACKEND = ('memcached://127.0.0.1:11211/?timeout=%(CACHE_TIMEOUT)d'
             '&max_entries=%(MAX_CACHE_ENTRIES)d' % locals())
