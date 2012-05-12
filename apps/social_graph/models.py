@@ -37,10 +37,11 @@ def new_user(sender, user, response, details, **kwargs):
 @receiver(post_save, sender=Backward)
 def follow_notification(sender, instance, created, **kwargs):
     if created:
-        Notification.objects.create(
+        signalAPI.queue_notification(
             sender_id=instance.source_id,
             recipient_id=instance.destination_id,
-            notice_object=instance
+            model_name="backward",
+            obj_id=instance.pk
         )
 
 @receiver(post_delete, sender=Backward)
@@ -48,8 +49,9 @@ def unfollow_notification(sender, instance, **kwargs):
     """
     Delete the notification that was already created.
     """
-    Notification.objects.get(
+    signalAPI.remove_notification(
         sender_id=instance.source_id,
         recipient_id=instance.destination_id,
-        object_id=instance.id
-    ).delete()
+        model_name="backward",
+        obj_id=instance.pk
+    )

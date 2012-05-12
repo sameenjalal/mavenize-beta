@@ -14,6 +14,7 @@ import facebook
 MODEL_APP_NAME = {
     'user': 'auth',
     'userstatistics': 'user_profile',
+    'backward': 'social_graph',
     'review': 'review',
     'agree': 'review',
     'thank': 'review',
