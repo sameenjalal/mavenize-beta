@@ -7,7 +7,7 @@ from django.db.models import F
 
 from item.models import Item
 
-import api
+import signalAPI
 
 
 class Bookmark(models.Model):
@@ -40,12 +40,12 @@ def create_bookmark(sender, instance, created, **kwargs):
     Increment the user and item's bookmarks by one.
     """
     if created:
-        api.update_statistics(
+        signalAPI.update_statistics(
             model_name="userstatistics",
             obj_id=instance.user_id,
             bookmarks=1
         )
-        api.update_statistics(
+        signalAPI.update_statistics(
             model_name="item",
             obj_id=instance.item_id,
             bookmarks=1
@@ -57,12 +57,12 @@ def delete_bookmark(sender, instance, **kwargs):
     """
     Undo the updates of the bookmark.
     """
-    api.update_statistics(
+    signalAPI.update_statistics(
         model_name="userstatistics",
         obj_id=instance.user_id,
         bookmarks=-1
     )
-    api.update_statistics(
+    signalAPI.update_statistics(
         model_name="item",
         obj_id=instance.item_id,
         bookmarks=-1

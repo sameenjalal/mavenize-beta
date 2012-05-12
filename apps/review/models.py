@@ -8,7 +8,7 @@ from django import forms
 from item.models import Item
 
 import datetime as dt
-import api
+import signalAPI
 import utils
 
 """
@@ -80,30 +80,30 @@ def create_review(sender, instance, created, **kwargs):
     Update the item's popularity by the review's rating.
     """
     if created:
-        api.queue_activity(
+        signalAPI.queue_activity(
             sender_id=instance.user_id, 
             verb="raved about",
             model_name="review",
             obj_id=instance.pk
         )
-        api.add_karma_action(
+        signalAPI.add_karma_action(
             recipient_id=instance.user_id,
             giver_id=instance.user_id,
             karma=5
         )
-        api.update_statistics(
+        signalAPI.update_statistics(
             model_name="userstatistics",
             obj_id=instance.user_id,
             reviews=1,
             karma=5
         )
         rating = utils.get_rating_field(instance.rating)
-        api.update_statistics(
+        signalAPI.update_statistics(
             model_name="item",
             obj_id=instance.item_id,
             **{ rating: 1, 'reviews': 1 }
         )
-        api.update_statistics(
+        signalAPI.update_statistics(
             model_name="popularity",
             obj_id=instance.item_id,
             today=instance.rating,
@@ -111,7 +111,7 @@ def create_review(sender, instance, created, **kwargs):
             month=instance.rating,
             alltime=instance.rating
         )
-        agrees = api.filter_then_order_by(
+        agrees = signalAPI.filter_then_order_by(
             model_name="agree",
             order_criteria="-created_at",
             giver=instance.user_id,
@@ -119,7 +119,7 @@ def create_review(sender, instance, created, **kwargs):
         )
         if agrees:
             rating = utils.get_rating_field(agrees[0].review.rating)
-            api.update_statistics(
+            signalAPI.update_statistics(
                 model_name="item",
                 obj_id=instance.item_id,
                 **{ rating: -1}
@@ -132,32 +132,32 @@ def delete_review(sender, instance, **kwargs):
     Deletes all related activities, agrees, and thanks.
     Undo the updates when the review was created.
     """
-    api.filter_then_delete(
+    signalAPI.filter_then_delete(
         model_name="activity",
-        content_type=api.get_content_type("review"),
+        content_type=signalAPI.get_content_type("review"),
         object_id=instance.pk
     )
-    api.filter_then_delete(model_name="agree", review=instance.pk)
-    api.filter_then_delete(model_name="thank", review=instance.pk)
-    api.update_statistics(
+    signalAPI.filter_then_delete(model_name="agree", review=instance.pk)
+    signalAPI.filter_then_delete(model_name="thank", review=instance.pk)
+    signalAPI.update_statistics(
         model_name="userstatistics",
         obj_id=instance.user_id,
         reviews=-1,
         karma=-5
     )
     rating = utils.get_rating_field(instance.rating)
-    api.update_statistics(
+    signalAPI.update_statistics(
         model_name="item",
         obj_id=instance.item_id,
         **{ rating: -1, 'reviews': -1 }
     )
-    api.update_statistics(
+    signalAPI.update_statistics(
         model_name="popularity",
         obj_id=instance.item_id,
         **utils.decrement_popularities(instance.created_at,
             instance.rating)
     )
-    agrees = api.filter_then_order_by(
+    agrees = signalAPI.filter_then_order_by(
         model_name="agree",
         order_criteria="-created_at",
         giver=instance.user_id,
@@ -165,7 +165,7 @@ def delete_review(sender, instance, **kwargs):
     )
     if agrees:
         rating = utils.get_rating_field(agrees[0].review.rating)
-        api.update_statistics(
+        signalAPI.update_statistics(
             model_name="item",
             obj_id=instance.item_id,
             **{ rating: 1 }
@@ -181,46 +181,46 @@ def create_agree(sender, instance, created, **kwargs):
     Increment the item's rating count by one.
     """
     if created:
-        api.queue_activity(
+        signalAPI.queue_activity(
             sender_id=instance.giver_id,
             verb="re-raved",
             model_name="review",
             obj_id=instance.review_id
         )
-        api.queue_notification(
+        signalAPI.queue_notification(
             sender_id=instance.giver_id,
             recipient_id=instance.review.user_id,
             model_name="agree",
             obj_id=instance.pk
         )
-        api.add_karma_action(
+        signalAPI.add_karma_action(
             recipient_id=instance.review.user_id,
             giver_id=instance.giver_id,
             karma=2
         )
-        api.add_karma_action(
+        signalAPI.add_karma_action(
             recipient_id=instance.giver_id,
             giver_id=instance.giver_id,
             karma=1
         )
-        api.update_statistics(
+        signalAPI.update_statistics(
             model_name="userstatistics",
             obj_id=instance.giver_id,
             agrees_out=1,
             karma=1
         )
-        api.update_statistics(
+        signalAPI.update_statistics(
             model_name="userstatistics",
             obj_id=instance.review.user_id,
             agrees_in=1,
             karma=2
         )
-        api.update_statistics(
+        signalAPI.update_statistics(
             model_name="review",
             obj_id=instance.review_id,
             agrees=1
         )
-        api.update_statistics(
+        signalAPI.update_statistics(
             model_name="popularity",
             obj_id=instance.review.item_id,
             today=instance.review.rating,
@@ -228,19 +228,19 @@ def create_agree(sender, instance, created, **kwargs):
             month=instance.review.rating,
             alltime=instance.review.rating
         )
-        reviews = api.filter_then_count(
+        reviews = signalAPI.filter_then_count(
             model_name="review",
             user=instance.giver_id,
             item=instance.review.item_id
         )
         if reviews == 0:
             rating = utils.get_rating_field(instance.review.rating)
-            api.update_statistics(
+            signalAPI.update_statistics(
                 model_name="item",
                 obj_id=instance.review.item_id,
                 **{ rating: 1}
             )
-            old_agrees = api.filter_excluding_me_then_order_by(
+            old_agrees = signalAPI.filter_excluding_me_then_order_by(
                 model_name="agree",
                 obj_id=instance.pk,
                 order_criteria="-created_at",
@@ -250,7 +250,7 @@ def create_agree(sender, instance, created, **kwargs):
             if old_agrees:
                 rating = utils.get_rating_field(
                                 old_agrees[0].review.rating)
-                api.update_statistics(
+                signalAPI.update_statistics(
                     model_name="item",
                     obj_id=instance.review.item_id,
                     **{ rating: -1 }
@@ -261,62 +261,62 @@ def delete_agree(sender, instance, **kwargs):
     """
     Undo the updates when the agree was created.
     """
-    api.remove_activity(
+    signalAPI.remove_activity(
         sender_id=instance.giver_id,
         verb="re-raved",
         model_name="review",
         obj_id=instance.review_id
     )
-    api.remove_notification(
+    signalAPI.remove_notification(
         sender_id=instance.giver_id,
         recipient_id=instance.review.user_id,
         model_name="agree",
         obj_id=instance.pk
     )
-    api.remove_karma_action(
+    signalAPI.remove_karma_action(
         recipient_id=instance.review.user_id,
         giver_id=instance.giver_id,
         karma=2,
         time_range=(instance.created_at,
                     instance.created_at+dt.timedelta(hours=1))
     )
-    api.remove_karma_action(
+    signalAPI.remove_karma_action(
         recipient_id=instance.giver_id,
         giver_id=instance.giver_id,
         karma=1,
         time_range=(instance.created_at,
                     instance.created_at+dt.timedelta(hours=1))
     )
-    api.update_statistics(
+    signalAPI.update_statistics(
        model_name="userstatistics",
        obj_id=instance.giver_id,
        agrees_out=-1,
        karma=-1
     )
-    api.update_statistics(
+    signalAPI.update_statistics(
         model_name="userstatistics",
         obj_id=instance.review.user_id,
         agrees_in=-1,
         karma=-2
     )
-    api.update_statistics(
+    signalAPI.update_statistics(
         model_name="review",
         obj_id=instance.review_id,
         agrees=-1
     )
-    api.update_statistics(
+    signalAPI.update_statistics(
         model_name="popularity",
         obj_id=instance.review.item_id,
         **utils.decrement_popularities(instance.created_at,
             instance.review.rating)
     )
-    reviews = api.filter_then_count(
+    reviews = signalAPI.filter_then_count(
         model_name="review",
         user=instance.giver_id,
         item=instance.review.item_id
     )
     if reviews == 0:
-        remaining = api.filter_then_order_by(
+        remaining = signalAPI.filter_then_order_by(
             model_name="agree",
             order_criteria="-created_at",
             giver=instance.giver_id,
@@ -325,7 +325,7 @@ def delete_agree(sender, instance, **kwargs):
         if (not remaining or 
                     remaining[0].created_at < instance.created_at):
             old_rating = utils.get_rating_field(instance.review.rating)
-            api.update_statistics(
+            signalAPI.update_statistics(
                 model_name="item",
                 obj_id=instance.review.item_id,
                 **{ old_rating: -1 }
@@ -333,7 +333,7 @@ def delete_agree(sender, instance, **kwargs):
             if remaining:
                 new_rating = utils.get_rating_field(
                     remaining[0].review.rating)
-                api.update_statistics(
+                signalAPI.update_statistics(
                     model_name="item",
                     obj_id=instance.review.item_id,
                     **{ new_rating: 1 }
@@ -348,34 +348,34 @@ def create_thank(sender, instance, created, **kwargs):
     Increment the receiver's thanks by one and karma by two.
     """
     if created:
-        api.queue_notification(
+        signalAPI.queue_notification(
             sender_id=instance.giver_id,
             recipient_id=instance.review.user_id,
             model_name="thank",
             obj_id=instance.pk
         )
-        api.add_karma_action(
+        signalAPI.add_karma_action(
             recipient_id=instance.review.user_id,
             giver_id=instance.giver_id,
             karma=1
         )
-        api.update_statistics(
+        signalAPI.update_statistics(
             model_name="userstatistics",
             obj_id=instance.giver_id,
             thanks_out=1
         )
-        api.update_statistics(
+        signalAPI.update_statistics(
             model_name="userstatistics",
             obj_id=instance.review.user_id,
             thanks_in=1,
             karma=1
         )
-        api.update_statistics(
+        signalAPI.update_statistics(
             model_name="review",
             obj_id=instance.review_id,
             thanks=1
         )
-        api.update_statistics(
+        signalAPI.update_statistics(
             model_name="popularity",
             obj_id=instance.review.item_id,
             today=instance.review.rating,
@@ -389,36 +389,36 @@ def delete_thank(sender, instance, **kwargs):
     """
     Undo the updates when the thank was created.
     """
-    api.remove_notification(
+    signalAPI.remove_notification(
         sender_id=instance.giver_id,
         recipient_id=instance.review.user_id,
         model_name="thank",
         obj_id=instance.pk
     )
-    api.remove_karma_action(
+    signalAPI.remove_karma_action(
         recipient_id=instance.review.user_id,
         giver_id=instance.giver_id,
         karma=1,
         time_range=(instance.created_at,
                     instance.created_at+dt.timedelta(hours=1))
     )
-    api.update_statistics(
+    signalAPI.update_statistics(
         model_name="userstatistics",
         obj_id=instance.giver_id,
         thanks_out=-1
     )
-    api.update_statistics(
+    signalAPI.update_statistics(
         model_name="userstatistics",
         obj_id=instance.review.user_id,
         thanks_in=-1,
         karma=-1
     )
-    api.update_statistics(
+    signalAPI.update_statistics(
         model_name="review",
         obj_id=instance.review_id,
         thanks=-1
     )
-    api.update_statistics(
+    signalAPI.update_statistics(
         model_name="popularity",
         obj_id=instance.review.item_id,
         **utils.decrement_popularities(instance.created_at,
