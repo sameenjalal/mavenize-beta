@@ -66,7 +66,7 @@ def profile(request, title):
 
         context = {
             'movie': movie,
-            'actors': movie.actors.all(),
+            'actors': movie.actors.all()[:5],
             'directors': movie.directors.all(),
             'genre': movie.genre.all(),
             'friend_bookmarks': movie.item.bookmark_set.select_related(
