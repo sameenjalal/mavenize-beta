@@ -54,32 +54,42 @@
         <h3 class="heading">
           <div style="float: left;">About Me</div>
           <div style="float: right;">
-            <a href="#edit"><img src="{{ STATIC_URL }}img/edit.png"</a>
+            <a href="#edit"><img src="{{ STATIC_URL }}img/edit.png"/></a>
           </div>
           <div style="clear: both;"></div>
         </h3>
-        <p id="about-me">{{ user.userprofile.about_me }}<p>
+        <p id="about-me">
+        {% if user.userprofile.about_me %}
+          {{ user.userprofile.about_me }}
+        {% else %}
+          You haven't filled out anything yet.
+        {% endif %}
+        </p>
+      </div>
+      <div class="module-container border">
+        <h3 class="heading">Achievements</h3>
         <table id="stats-table" class="table">
-          <thead>
-            <tr>
-              <th>achievements</th>
-            </tr>
-          </thead>
           <tbody>
             <tr>
-              <td>raves</td>
+              <td>Karma</td>
+              <td>
+                <span class="badge badge-info stat">{{ user.userstatistics.karma }}</span>
+              </td>
+            </tr>
+            <tr>
+              <td>Raves</td>
               <td>
                 <span class="badge badge-info stat">{{ user.userstatistics.reviews }}</span>
               </td>
             </tr>
             <tr>
-              <td>re-raves</td>
+              <td>Re-Raves</td>
               <td>
                 <span class="badge badge-info stat">{{ user.userstatistics.agrees_in }}</span>
               </td>
             </tr>
             <tr>
-              <td>thanks</td>
+              <td>Thanks</td>
               <td>
                 <span class="badge badge-info stat">{{ user.userstatistics.thanks_in }}</span>
               </td>
