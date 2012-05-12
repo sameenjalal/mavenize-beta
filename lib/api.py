@@ -129,11 +129,12 @@ def get_beneficiary_leaderboard(user_id, start_time):
         KarmaAction.objects.filter(created_at__gte=start_time) \
                            .filter(recipient=user_id) \
                            .exclude(giver=user_id) \
-                           .values('recipient') \
-                           .annotate(total_received=Sum('karma')) \
-                           .order_by('-total_received')[:5]
+                           .values('giver') \
+                           .annotate(total_given=Sum('karma')) \
+                           .order_by('-total_given')[:5]
     
-    return _match_users_with_karma(beneficiary_rankings)
+    return _match_users_with_karma(beneficiary_rankings,
+        'giver', 'total_given')
 
 
 def get_relative_leaderboard(user_id, start_time):
@@ -160,25 +161,27 @@ def get_relative_leaderboard(user_id, start_time):
     start, end = _compute_relative_leaderboard_indexes(my_ranking,
         len(leaderboard_rankings))
     
-    return (_match_users_with_karma(leaderboard_rankings[start:end]),
-        start)
+    return (_match_users_with_karma(
+                leaderboard_rankings[start:end],
+                'recipient',
+                'total_received'),
+            start)
 
 
-def _match_users_with_karma(rankings):
+def _match_users_with_karma(rankings, user_key, karma_key):
     """
     Returns a list of tuples that maps User objects to karma.
-        rankings: list of dictionaries that contains user_ids (integer)
-            and karma (integer)
+        rankings: list of dictionaries that contains user_ids
+            (integer) and karma (integer)
     """
     if not rankings:
         return []
 
-    user = rankings[0].keys()[0]
-    karma = rankings[0].keys()[1]
-    giver_ids = [r[user] for r in rankings]
+    giver_ids = [r[user_key] for r in rankings]
     ids_to_users = User.objects.select_related(
         'userprofile').in_bulk(giver_ids)
-    return [(ids_to_users[r[user]], r[karma]) for r in rankings]
+    return [(ids_to_users[r[user_key]], r[karma_key]) \
+        for r in rankings]
 
 
 def _compute_relative_leaderboard_indexes(ranking, size):
