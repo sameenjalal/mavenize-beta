@@ -54,6 +54,11 @@ urlpatterns += patterns('social_graph.views',
     url(r'^unfollow/(?P<user_id>\d+)/$', 'unfollow'),
 )
 
+urlpatterns += patterns('notification.views',
+    url(r'^notifications/count/$', 'new_notifications'),
+    url(r'^notifications/recent/$', 'recent_notifications'),
+)
+
 urlpatterns += patterns('django.views.generic.simple',
     url(r'^nexus/', include(nexus.site.urls)),
     url(r'', include('social_auth.urls')),
