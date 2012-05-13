@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.models import User
+from django.core.cache import get_cache
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.core.urlresolvers import reverse
 from django.db.models import Sum
@@ -258,10 +259,29 @@ def is_following(source_id, destination_id):
         source_id: user id of the source (integer)
         destination_id: user id of the destination (integer)
     """
-    return True if Forward.objects.filter(source_id=source_id,
-                                          destination_id=destination_id)\
-                else False
+    if Forward.objects.filter(source_id=source_id,
+                              destination_id=destination_id):
+        return True
+    return False
 
+
+def get_new_notifications_count(user_id):
+    """
+    Returns the number of new notifications for a user.
+        user_id: primary key of the user (integer)
+    """
+    notifications_cache = get_cache('notifications')
+    new_key = "user:" + str(user_id) + ":new"
+    return simplejson.dumps(notifications_cache.get(new_key))
+
+def get_recent_notifications(user_id):
+    """
+    Returns the last five notifications for a user.
+        user_id: primary key of the user (integer)
+    """
+    notifications_cache = get_cache('notifications')
+    recent_key = "user:" + str(user_id) + ":recent"
+    return simplejson.dumps(notifications_cache.get(recent_key))
 
 """
 CREATE METHODS
@@ -355,7 +375,19 @@ def thank(user_id, review_id, note):
         form.save()
         return False
     return "You already thanked this review!"
-    
+
+"""
+UPDATE METHODS
+"""
+def reset_new_notifications_count(user_id):
+    """
+    Resets the number of new notifications for a user to zero.
+        user_id: primary key of the user (integer)
+    """
+    notifications_cache = get_cache('notifications')
+    new_key = "user:" + str(user_id) + ":new"
+    notifications_cache.set(new_key, 0)
+
 """
 DELETE METHODS
 """
