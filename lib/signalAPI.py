@@ -26,7 +26,6 @@ MODEL_APP_NAME = {
     'notification': 'notification'
 }
 
-notifications_cache = get_cache('notifications')
 
 """
 GET METHODS
@@ -120,15 +119,43 @@ def queue_notification(sender_id, recipient_id, model_name, obj_id):
     """
     model = get_model(MODEL_APP_NAME[model_name], model_name)
     try:
-        Notification.objects.create(
+        pg_notification = Notification.objects.create(
             sender=User.objects.get(pk=sender_id),
             recipient=User.objects.get(pk=recipient_id),
             notice_object=model.objects.get(pk=obj_id)
         )
-        key = "user:" + str(recipient_id) + ":new"
-        if not notifications_cache.get(key):
-            notifications_cache.set(key, 0)
-        notifications_cache.incr(key)
+
+        notifications_cache = get_cache('notifications')
+        new_key = "user:" + str(recipient_id) + ":new"
+
+        if not notifications_cache.get(new_key):
+            notifications_cache.set(new_key, 0)
+        notifications_cache.incr(new_key)
+        
+        redis_notification = {
+            'sender_id': sender_id,
+            'sender_name': pg_notification.sender.get_full_name(),
+            'notification_type': model_name,
+            'timestamp': pg_notification.created_at
+        }
+        if model_name == "agree" or model_name == "thank":
+            redis_notification['obj_type'] = \
+                pg_notification.notice_object.review.item.item_type
+            redis_notification['obj_name'] = \
+                getattr(pg_notification.notice_object.review.item,
+                        redis_notification['obj_type']).__str__()
+        recent_key = "user:" + str(recipient_id) + ":recent"
+        recent_notifications = notifications_cache.get(recent_key)
+        if not recent_notifications:
+            notifications_cache.set(recent_key,
+                                    [redis_notification])
+        else:
+            if len(recent_notifications) >= 5:
+                recent_notifications.pop()                
+            recent_notifications.insert(0, redis_notification)
+            notifications_cache.set(recent_key,
+                                    recent_notifications)
+
     except ObjectDoesNotExist:
         pass
 
