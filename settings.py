@@ -82,8 +82,12 @@ if is_solo() or is_dev():
             'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
         },
         'notifications': {
-            'BACKEND': 'redis_cache.cache.ShardedRedisCache',
-            'LOCATION': ['127.0.0.1:6379:1'],
+            'BACKEND': 'redis_cache.cache.RedisCache',
+            'LOCATION': '127.0.0.1:6379',
+            'OPTIONS': {
+                'DB': 1,
+                'PARSER_CLASS': 'redis.connection.HiredisParser'
+            }
         }
     }
 
@@ -271,6 +275,7 @@ middleware_list = [
     'commonware.log.ThreadRequestMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'announce.middleware.AnnounceCookieMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -350,6 +355,7 @@ apps_list = [
         'south',
         'sorl.thumbnail',
         'haystack',
+        'announce',
 ]
 
 if is_solo() or is_dev():
