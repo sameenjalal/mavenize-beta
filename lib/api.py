@@ -22,7 +22,7 @@ import cacheAPI
 MESSAGES = {
     'agree': 'just re-raved you on',
     'thank': 'thanked you for your rave on',
-    'backward': 'is now following you'
+    'backward': 'is now following you.'
 }
 
 """
@@ -290,10 +290,17 @@ def get_recent_notifications(user_id):
         'user_name': notification['sender_name'],
         'user_url': reverse('user-profile',
             args=[notification['sender_id']]),
+        'user_avatar': get_thumbnail(
+                            'img/users/thumbnails/' + \
+                                str(notification['sender_id']) + 't.jpg',
+                            '25x25',
+                            crop='center'
+                        ).url,
         'message': MESSAGES[notification['notification_type']],
         'item_name': notification.get('item_name', ''),
         'item_url': reverse(notification['item_type']+'-profile',
-            args=[slugify(notification.get('item_name', 'none'))])
+            args=[slugify(notification.get('item_name', 'none'))]),
+        'time_since': timesince(notification['timestamp'])
     } for notification in raw_notifications]
 
     return simplejson.dumps(response)

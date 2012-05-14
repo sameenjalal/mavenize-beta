@@ -1,0 +1,46 @@
+#notifications-list {
+  padding: 0;
+  width: 400px;
+  .RoundedCorners(2px);
+
+  li {
+    min-height: 35px;
+    padding: 9px 10px 9px 5px;
+  }
+  
+  a {
+    color: @linkColor;
+    display: inline;
+    padding: 0;
+  }
+
+  a:hover {
+    background: none;
+    text-decoration: underline;
+  }
+
+  .divider {
+    min-height: 1px;
+    margin: 0 1px;
+    padding: 0;
+  }
+
+  .timestamp {
+    color: @metaColor;
+    font-size: 9px;
+  }
+
+  .user-thumbnail {
+    margin: 5px;
+
+    img {
+      float: left;
+    }
+  }
+
+  #all-notifications {
+    background: @contrastFill;
+    min-height: 20px;
+    text-align: center;
+  }
+}

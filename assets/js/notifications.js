@@ -4,14 +4,26 @@ $(document).ready(function() {
     <% for (var i = 0; i < notifications.length; i++) { %>\
       <% var notification = notifications[i]; %>\
         <li>\
+          <div class='user-thumbnail pull-left'>\
+            <a href='<%= notification.user_url %>'>\
+              <img src='<%= notification.user_avatar %>' />\
+            </a>\
+          </div>\
           <a href='<%= notification.user_url %>'><%= notification.user_name %></a>\
           <%= notification.message %>\
           <% if (notification.item_name) { %>\
-            <a href='<%= notification.item_url %>'><%= notification.item_name %></a>\
+            <a href='<%= notification.item_url %>'><%= notification.item_name %></a>.\
           <% } %>\
-          .\
+          <div class='timestamp pull-right'>\
+            <%= notification.time_since %> ago\
+          </div>\
+          <div style='clear: both;'></div>\
         </li>\
+        <li class='divider'></li>\
     <% } %>\
+    <li id='all-notifications'>\
+      <a href='/me/#notifications/'>See All Notifications</a>\
+    </li>\
   ");
 
   // Initializers
@@ -36,6 +48,7 @@ $(document).ready(function() {
         $('#notifications-dropdown ul').append(recent);
       });
     }
+    $('#notifications-count').text("0");
   });
 });
 
