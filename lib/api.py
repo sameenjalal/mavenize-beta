@@ -1,9 +1,9 @@
 from django.contrib import messages
 from django.contrib.auth.models import User
-from django.core.cache import get_cache
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.core.urlresolvers import reverse
 from django.db.models import Sum
+from django.template.defaultfilters import slugify
 from django.utils import simplejson
 from django.utils.html import escape, linebreaks
 from django.utils.timesince import timesince
@@ -17,6 +17,13 @@ from social_graph.models import Forward, Backward
 from user_profile.models import UserProfile, UserStatistics
 
 from sorl.thumbnail import get_thumbnail
+import cacheAPI
+
+MESSAGES = {
+    'agree': 'just re-raved you on',
+    'thank': 'thanked you for your rave on',
+    'backward': 'is now following you'
+}
 
 """
 GET METHODS
@@ -270,18 +277,26 @@ def get_new_notifications_count(user_id):
     Returns the number of new notifications for a user.
         user_id: primary key of the user (integer)
     """
-    notifications_cache = get_cache('notifications')
-    new_key = "user:" + str(user_id) + ":new"
-    return simplejson.dumps(notifications_cache.get(new_key))
+    return simplejson.dumps(
+        cacheAPI._get_new_notifications_count(user_id))
 
 def get_recent_notifications(user_id):
     """
     Returns the last five notifications for a user.
         user_id: primary key of the user (integer)
     """
-    notifications_cache = get_cache('notifications')
-    recent_key = "user:" + str(user_id) + ":recent"
-    return simplejson.dumps(notifications_cache.get(recent_key))
+    raw_notifications = cacheAPI._get_notifications(user_id)
+    response = [{
+        'user_name': notification['sender_name'],
+        'user_url': reverse('user-profile',
+            args=[notification['sender_id']]),
+        'message': MESSAGES[notification['notification_type']],
+        'item_name': notification.get('item_name', ''),
+        'item_url': reverse(notification['item_type']+'-profile',
+            args=[slugify(notification.get('item_name', 'none'))])
+    } for notification in raw_notifications]
+
+    return simplejson.dumps(response)
 
 """
 CREATE METHODS
@@ -384,9 +399,7 @@ def reset_new_notifications_count(user_id):
     Resets the number of new notifications for a user to zero.
         user_id: primary key of the user (integer)
     """
-    notifications_cache = get_cache('notifications')
-    new_key = "user:" + str(user_id) + ":new"
-    notifications_cache.set(new_key, 0)
+    cacheAPI._reset_new_notifications_count(user_id)
 
 """
 DELETE METHODS
