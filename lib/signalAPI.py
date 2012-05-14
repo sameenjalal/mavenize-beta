@@ -136,7 +136,8 @@ def queue_notification(sender_id, recipient_id, model_name, obj_id):
         announce_client.emit(
             recipient_id,
             'notifications',
-            data={ 'new': notifications_cache.get(new_key) }
+            data={ 'new': cacheAPI._get_new_notifications_count(
+                                recipient_id) }
         )
 
     except ObjectDoesNotExist:
