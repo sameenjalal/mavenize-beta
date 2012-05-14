@@ -1,6 +1,5 @@
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
-from django.core.cache import get_cache
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import get_model, F
 
@@ -10,6 +9,8 @@ from leaderboard.models import KarmaAction
 from social_auth.models import UserSocialAuth
 from social_graph.models import Forward, Backward
 
+from announce import AnnounceClient
+import cacheAPI
 import facebook
 
 MODEL_APP_NAME = {
@@ -26,6 +27,7 @@ MODEL_APP_NAME = {
     'notification': 'notification'
 }
 
+announce_client = AnnounceClient()
 
 """
 GET METHODS
@@ -125,36 +127,17 @@ def queue_notification(sender_id, recipient_id, model_name, obj_id):
             notice_object=model.objects.get(pk=obj_id)
         )
 
-        notifications_cache = get_cache('notifications')
         new_key = "user:" + str(recipient_id) + ":new"
 
-        if not notifications_cache.get(new_key):
-            notifications_cache.set(new_key, 0)
-        notifications_cache.incr(new_key)
-        
-        redis_notification = {
-            'sender_id': sender_id,
-            'sender_name': pg_notification.sender.get_full_name(),
-            'notification_type': model_name,
-            'timestamp': pg_notification.created_at
-        }
-        if model_name == "agree" or model_name == "thank":
-            redis_notification['obj_type'] = \
-                pg_notification.notice_object.review.item.item_type
-            redis_notification['obj_name'] = \
-                getattr(pg_notification.notice_object.review.item,
-                        redis_notification['obj_type']).__str__()
-        recent_key = "user:" + str(recipient_id) + ":recent"
-        recent_notifications = notifications_cache.get(recent_key)
-        if not recent_notifications:
-            notifications_cache.set(recent_key,
-                                    [redis_notification])
-        else:
-            if len(recent_notifications) >= 5:
-                recent_notifications.pop()                
-            recent_notifications.insert(0, redis_notification)
-            notifications_cache.set(recent_key,
-                                    recent_notifications)
+        if not cacheAPI._get_new_notifications_count(recipient_id):
+            cacheAPI._reset_new_notifications_count(recipient_id)
+        cacheAPI._increment_new_notifications_count(recipient_id)
+        cacheAPI._cache_notification_for_user(pg_notification)
+        announce_client.emit(
+            recipient_id,
+            'notifications',
+            data={ 'new': notifications_cache.get(new_key) }
+        )
 
     except ObjectDoesNotExist:
         pass
