@@ -32,7 +32,7 @@ def agree(request, review_id):
         if not error:
             return HttpResponse(status=201)
         else:
-            return HttpResponse(status=500)
+            return HttpResponse(content=error, status=202)
     return HttpResponse(status=403)
 
 
@@ -49,7 +49,7 @@ def disagree(request, review_id):
         if not error:
             return HttpResponse(status=201)
         else:
-            return HttpResponse(status=500)
+            return HttpResponse(content=error, status=202)
     return HttpResponse(status=403)
 
 
@@ -65,6 +65,6 @@ def thank(request, review_id):
         if not error:
             return HttpResponse(status=201)
         else:
-            return HttpResponse(status=500)
+            return HttpResponse(content=error, status=202)
     return HttpResponse(status=403)
 

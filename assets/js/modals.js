@@ -101,7 +101,9 @@ $(document).ready(function() {
     });
     $(this).append(form);
     $('#modal-text').elastic();
-    $(this).find('form').ajaxForm();
+    $(this).find('form').ajaxForm(function() {
+      $('#disagree').modal('hide');
+    });
     $(this).find('form').ratingForm();
   });
 
@@ -112,7 +114,9 @@ $(document).ready(function() {
     });
     $(this).append(form);
     $('#modal-text').elastic();
-    $(this).find('form').ajaxForm();
+    $(this).find('form').ajaxForm(function() {
+      $('#thank').modal('hide');
+    });
   });
 
   $('.modal').on('hide', function() {
