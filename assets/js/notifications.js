@@ -22,7 +22,7 @@ $(document).ready(function() {
         <li class='divider'></li>\
     <% } %>\
     <li id='all-notifications'>\
-      <a href='/me/#notifications/'>See All Notifications</a>\
+      <a href='/me/#notifications'>See All Notifications</a>\
     </li>\
   ");
 
@@ -32,6 +32,12 @@ $(document).ready(function() {
     badge.text(count | 0);
   })
   $('#notifications-link').append(badge);
+
+  if (window.location.hash == "#notifications") {
+    $('#filters li').removeClass('active');
+    $('#filters a[href="#notifications"]').tab('show').addClass('active');
+  }
+    
   
   // SocketIO Listeners
   announce.on('notifications', function(data) {

@@ -1,28 +1,29 @@
+// Global Variables
+var userId = USER_ID; 
+
+// Helper Functions
+var getRavesUrl = function(page) {
+  return '/users/' + userId + '/raves/' + page + '/';
+}
+
+var getMarksUrl = function(page) {
+  return '/users/' + userId + '/marks/' + page + '/';
+}
+
+var getFollowingUrl = function(page) {
+  return '/users/' + userId + '/following/' + page + '/';
+}
+
+var getFollowersUrl = function(page) {
+  return '/users/' + userId + '/followers/' + page + '/';
+}
+
+var getNotificationsUrl = function(page) {
+  return '/notifications/' + page + '/';
+}
+
 $(document).ready(function () {
-  // Global Variables
-  var userId = USER_ID; 
-
   // Helper Functions
-  var getRavesUrl = function(page) {
-    return '/users/' + userId + '/raves/' + page + '/';
-  }
-
-  var getMarksUrl = function(page) {
-    return '/users/' + userId + '/marks/' + page + '/';
-  }
-
-  var getFollowingUrl = function(page) {
-    return '/users/' + userId + '/following/' + page + '/';
-  }
-
-  var getFollowersUrl = function(page) {
-    return '/users/' + userId + '/followers/' + page + '/';
-  }
-
-  var getNotificationsUrl = function(page) {
-    return '/notifications/' + page + '/';
-  }
-
   var infiniteScroll = _.debounce(function() {
     var break_point = $(document).height() - ($(window).height() * 1.02);
     if ($(window).scrollTop() >= break_point) {
@@ -45,7 +46,9 @@ $(document).ready(function () {
   }, 250);
 
   // Initializer
-  $('.activities').loadActivities(getRavesUrl(1));
+  if (window.location.hash != "#notifications") {
+    $('#raves ul').loadActivities(getRavesUrl(1));
+  }
 
   // Listeners
   $('#filters a[href="#marks"]').one("click", function() {
@@ -65,4 +68,16 @@ $(document).ready(function () {
   });
 
   $(window).scroll(infiniteScroll);
+});
+
+$(window).load(function() {
+  // Initializer
+  if (window.location.hash == "#notifications") {
+    $('#filters li').removeClass('active');
+    $('#filters a[href="#notifications"]').click();
+    $('#filters a[href="#notifications"]').removeClass('active');
+    $('#filters a[href="#raves"]').one("click", function() {
+      $('#raves ul').loadActivities(getRavesUrl(1));
+    });
+  }
 });
