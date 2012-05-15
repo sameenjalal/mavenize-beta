@@ -33,12 +33,6 @@ $(document).ready(function() {
   })
   $('#notifications-link').append(badge);
 
-  if (window.location.hash == "#notifications") {
-    $('#filters li').removeClass('active');
-    $('#filters a[href="#notifications"]').tab('show').addClass('active');
-  }
-    
-  
   // SocketIO Listeners
   announce.on('notifications', function(data) {
     $('#notifications-count').text(data.new);

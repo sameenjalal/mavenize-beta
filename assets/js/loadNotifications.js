@@ -9,12 +9,17 @@
               <img src='<%= notification.user_avatar %>' />\
             </a>\
           </div>\
-          <div class='notification-text'>\
+          <div class='notification-meta'>\
             <a href='<%= notification.user_url %>'><%= notification.user_name %></a>\
             <%= notification.message %>\
             <% if (notification.item_name) { %>\
               <a href='<%= notification.item_url %>'><%= notification.item_name %></a>.\
             </div>\
+          <% if (notification.thank_you) { %>\
+            <div class='notification-text'>\
+              <%= notification.thank_you %>\
+            </div>\
+          <% } %>\
           <% } %>\
           <div class='timestamp pull-right'>\
             <%= notification.time_since %> ago\

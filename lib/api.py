@@ -356,6 +356,8 @@ def _generate_notification_response(notification, next_page):
                     item_type).__str__()
         response['item_url'] = reverse(item_type+'-profile',
             args=[slugify(response['item_name'])])
+        if notification.content_type.__str__() == "thank":
+            response['thank_you'] = escape(notification.notice_object.note)
     
     return response
 
