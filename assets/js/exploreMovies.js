@@ -1,7 +1,4 @@
 $(document).ready(function () {
-  // Global Variables
-  var currentParameters = '';
-
   // Templates
   var filtersTemplate = _.template(" \
     <div class='modal-header'> \
@@ -72,6 +69,7 @@ $(document).ready(function () {
   }, 250);
 
   // Initializer
+  var currentParameters = window.location.search.slice(1);
   $('.tab-content .active .thumbnails').loadMovies(
     getUrl('today', 1))
   $('#filter-options').hide();

@@ -119,3 +119,19 @@ def cast(request):
     }
     return HttpResponse(simplejson.dumps(response),
         mimetype="application/json")
+
+def synopsis(request, title):
+    """
+    Returns the synopsis for the given movie in JSON.
+    """
+    if not request.is_ajax():
+        raise Http404
+
+    response = {
+        'synopsis': Movie.objects.get(url=title).synopsis
+    }
+
+    return HttpResponse(simplejson.dumps(response),
+        mimetype="application/json")
+
+

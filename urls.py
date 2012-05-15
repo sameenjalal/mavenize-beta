@@ -34,7 +34,8 @@ urlpatterns += patterns('user_profile.views',
 urlpatterns += patterns('movie.views',
     url(r'^movies/$', 'explore', name='movie-explore'),
     url(r'^movies/(?P<title>[-\w]+)/$', 'profile', name="movie-profile"),
-    
+
+    url(r'^movies/(?P<title>[-\w]+)/synopsis$', 'synopsis'),
     url(r'^movies/genres/all$', 'genres'),
     url(r'^movies/cast/all$', 'cast'),
     url(r'^movies/(?P<time_period>\w+)/(?P<page>\d+)/$', 'explore'),

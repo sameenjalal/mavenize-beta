@@ -19,13 +19,23 @@
       <section id="description">
         <p id="synopsis">
           {{ movie.synopsis|slice:":180" }}...
-          <a href="#">more</a>
+          <a id="get-synopsis" href="#synopsis">more</a>
         </p>
         <p id="actors">
-          Actors: {{ actors|join:", "}}
+          <b>Actors:</b>
+          {% for actor in actors %}
+            <a href="/movies/?actors={{ actor.name }}">
+              {{ actor.name }}
+            </a>{% if not forloop.last %},{% endif %}
+          {% endfor %}
         </p>
         <p id="directors">
-          Director{{ directors|pluralize }}: {{ directors|join:", " }}
+          <b>Director{{ directors|pluralize }}:</b>
+          {% for director in directors %}
+            <a href="/movies/?directors={{ director.name }}">
+              {{ director.name }}
+            </a>{% if not forloop.last %},{% endif %}
+          {% endfor %}
         </p>
       </section>
       {% if not has_reviewed %}
@@ -36,7 +46,7 @@
       <section id="reviews">
         <div id="my-reviews" class="module-container">
         {% if my_reviews %}
-          <h3 class="heading">Chosen by Yours Truly</h3>
+          <h3 class="heading">Your Raves, Re-Raves, and Thanks</h3>
           <ul class="unstyled">
           {% for review in my_reviews %}
             {% include "movie_review.html" %}
@@ -46,7 +56,7 @@
         </div>
         <div id="friend-reviews" class="module-container">
         {% if friend_reviews %}
-          <h3 class="heading">From the Hearts of Your Confidants</h3>
+          <h3 class="heading">Raves by Your Friends</h3>
           <ul class="unstyled">
           {% for review in friend_reviews %}
             {% include "movie_review.html" %}
@@ -56,9 +66,7 @@
         </div>
         <div id="friend-agrees" class="module-container">
         {% if friend_agrees %}
-          <h3 class="heading">
-            Handpicked by Those You Trust
-          </h3>
+          <h3 class="heading">Re-Raved by Your Friends</h3>
           <ul class="unstyled">
           {% for agree in friend_agrees %}
             {% include "movie_agree.html" %}
@@ -84,7 +92,10 @@
     </div>
     <div id="sidebar" class="span3">
       <div class="thumbnail">
-        <img src="{{ movie.image.url }}" />
+        {% load thumbnail %}
+        {% thumbnail movie.image "212" as im %}
+        <img src="{{ im.url }}" />
+        {% endthumbnail %}
       </div>
       <div id="chart-wrapper" class="module-container border">
         <div id="rating-chart">
@@ -123,7 +134,7 @@
                 <td><img src="{{ bookmark.user.userprofile.thumbnail.url }}" /></td>
                 <td><a href="#">{{ bookmark.user.get_full_name }}</a></td>
             {% empty %}
-              <p class="empty-message">Show them who's boss! Mark your territory first!</p>
+              <p class="empty-message">Be the first among your friends to mark {{ movie.title }}!</p>
             {% endfor %}
         </table>
       </div>
@@ -142,6 +153,12 @@
     $(document).ready(function() {
       $('#review-text').elastic();
       $('#review-form form').ratingForm();
+      $('#get-synopsis').click(function() {
+        $.get(window.location.pathname + 'synopsis', function(data) {
+          $('#synopsis').empty();
+          $('#synopsis').append(data.synopsis);
+        });
+      });
     });
   </script>
   <script type="text/javascript" src="{{ STATIC_URL }}js/vendor/django.csrf.js"></script>
