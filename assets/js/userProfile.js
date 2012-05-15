@@ -4,19 +4,23 @@ $(document).ready(function () {
 
   // Helper Functions
   var getRavesUrl = function(page) {
-    return '/users/' + userId + '/raves/' + page;
+    return '/users/' + userId + '/raves/' + page + '/';
   }
 
   var getMarksUrl = function(page) {
-    return '/users/' + userId + '/marks/' + page;
+    return '/users/' + userId + '/marks/' + page + '/';
   }
 
   var getFollowingUrl = function(page) {
-    return '/users/' + userId + '/following/' + page;
+    return '/users/' + userId + '/following/' + page + '/';
   }
 
   var getFollowersUrl = function(page) {
-    return '/users/' + userId + '/followers/' + page;
+    return '/users/' + userId + '/followers/' + page + '/';
+  }
+
+  var getNotificationsUrl = function(page) {
+    return '/notifications/' + page + '/';
   }
 
   var infiniteScroll = _.debounce(function() {
@@ -33,6 +37,9 @@ $(document).ready(function () {
           $(activeTab + ' ul').loadUsers(getFollowingUrl(nextPage));
         else if (activeTab == "#followers")
           $(activeTab + ' ul').loadUsers(getFollowersUrl(nextPage));
+        else if (activeTab == "#notifications")
+          $(activeTab + ' ul').loadNotifications(
+              getNotificationsUrl(nextPage));
       }
     }
   }, 250);
@@ -42,15 +49,19 @@ $(document).ready(function () {
 
   // Listeners
   $('#filters a[href="#marks"]').one("click", function() {
-    $('#marks .thumbnails').loadMovies(getMarksUrl(1));
+    $('#marks ul').loadMovies(getMarksUrl(1));
   });
 
   $('#filters a[href="#following"]').one("click", function() {
-    $('#following .users').loadUsers(getFollowingUrl(1));
+    $('#following ul').loadUsers(getFollowingUrl(1));
   });
 
   $('#filters a[href="#followers"]').one("click", function() {
-    $('#followers .users').loadUsers(getFollowersUrl(1));
+    $('#followers ul').loadUsers(getFollowersUrl(1));
+  });
+
+  $('#filters a[href="#notifications"]').one("click", function() {
+    $('#notifications ul').loadNotifications(getNotificationsUrl(1));
   });
 
   $(window).scroll(infiniteScroll);

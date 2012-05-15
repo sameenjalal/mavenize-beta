@@ -25,17 +25,17 @@
     padding: 0;
   }
 
-  .timestamp {
-    color: @metaColor;
-    font-size: 9px;
-  }
-
-  .user-thumbnail {
+  .user-mini-thumbnail {
     margin: 5px;
 
     img {
       float: left;
     }
+  }
+
+  .mini-timestamp {
+    color: @metaColor;
+    font-size: 9px;
   }
 
   #all-notifications {
@@ -44,3 +44,29 @@
     text-align: center;
   }
 }
+
+.notification {
+  margin-bottom: 10px;
+  .Border();
+
+  .notification-text {
+    background: @contrastFill;
+    padding: 10px 10px 10px 70px;
+  }
+
+  .timestamp {
+    color: @metaColor;
+    font-size: 10px;
+    padding: 5px 10px 5px 5px;
+  }
+
+  .user-thumbnail {
+    margin: 10px;
+
+    img {
+      float: left;
+    }
+  }
+}
+
+

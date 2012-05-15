@@ -1,4 +1,4 @@
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
 from django.http import HttpResponse, Http404
 from django.contrib.auth.decorators import login_required
@@ -19,7 +19,7 @@ def my_profile(request):
 def profile(request, user_id):
     me = request.session['_auth_user_id'] 
     if int(user_id) == me:
-        return my_profile(request)
+        return redirect('my-profile')
 
     try:
         context = {

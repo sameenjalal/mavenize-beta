@@ -2,7 +2,7 @@ $(document).ready(function () {
   // Helper Functions
 
   var getUrl = function(page) {
-    return '/feed/' + page;
+    return '/feed/' + page + '/';
   }
 
   var infiniteScroll = _.debounce(function() {

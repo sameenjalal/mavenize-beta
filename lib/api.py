@@ -12,6 +12,7 @@ from activity_feed.models import Activity
 from bookmark.models import Bookmark, BookmarkGroup
 from leaderboard.models import KarmaAction
 from movie.models import Movie, Genre, Actor, Director
+from notification.models import Notification
 from review.models import Review, Agree, Thank, ReviewForm, ThankForm
 from social_graph.models import Forward, Backward
 from user_profile.models import UserProfile, UserStatistics
@@ -304,6 +305,60 @@ def get_recent_notifications(user_id):
     } for notification in raw_notifications]
 
     return simplejson.dumps(response)
+
+
+def get_notifications(user_id, page):
+    """
+    Returns a list of notifications for a user.
+        user_id: primary key of the user (integer)
+        page: page for the paginator (integer)
+    """
+    notifications = \
+        Notification.objects.select_related('sender',
+                                            'sender__userprofile') \
+                            .prefetch_related(
+                                    'notice_object__review__item') \
+                            .filter(recipient=user_id) \
+                            .order_by('-created_at')
+    paginator = Paginator(notifications, 20)
+
+    try:
+        next_page = paginator.page(page).next_page_number()
+        paginator.page(next_page)
+    except (EmptyPage, InvalidPage):
+        next_page = ''
+
+    response = [_generate_notification_response(notification, next_page) 
+        for notification in paginator.page(page)]
+
+    return simplejson.dumps(response)
+
+def _generate_notification_response(notification, next_page):
+    """
+    Converts a notification into a Python dictioanry that will
+    be returned as JSON.
+        notification: Notification object
+    """
+    response = {
+        'user_name': notification.sender.get_full_name(),
+        'user_url': reverse('user-profile',
+            args=[notification.sender_id]),
+        'user_avatar': notification.sender.userprofile.thumbnail.url,
+        'message': MESSAGES[notification.content_type.__str__()],
+        'time_since': timesince(notification.created_at),
+        'next': next_page 
+    }
+    if (notification.content_type.__str__() == "thank" or 
+            notification.content_type.__str__() == "agree"):
+        item_type = notification.notice_object.review.item.item_type
+        response['item_name'] = \
+            getattr(notification.notice_object.review.item,
+                    item_type).__str__()
+        response['item_url'] = reverse(item_type+'-profile',
+            args=[slugify(response['item_name'])])
+    
+    return response
+
 
 """
 CREATE METHODS

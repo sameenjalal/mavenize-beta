@@ -1,10 +1,10 @@
 $(document).ready(function() {
   // Templates
-  var notificationsTemplate = _.template("\
+  var miniNotificationTemplate = _.template("\
     <% for (var i = 0; i < notifications.length; i++) { %>\
       <% var notification = notifications[i]; %>\
         <li>\
-          <div class='user-thumbnail pull-left'>\
+          <div class='user-mini-thumbnail pull-left'>\
             <a href='<%= notification.user_url %>'>\
               <img src='<%= notification.user_avatar %>' />\
             </a>\
@@ -14,7 +14,7 @@ $(document).ready(function() {
           <% if (notification.item_name) { %>\
             <a href='<%= notification.item_url %>'><%= notification.item_name %></a>.\
           <% } %>\
-          <div class='timestamp pull-right'>\
+          <div class='mini-timestamp pull-right'>\
             <%= notification.time_since %> ago\
           </div>\
           <div style='clear: both;'></div>\
@@ -31,7 +31,7 @@ $(document).ready(function() {
   $.get('/notifications/count/', function(count) {
     badge.text(count | 0);
   })
-  $('#notifications').append(badge);
+  $('#notifications-link').append(badge);
   
   // SocketIO Listeners
   announce.on('notifications', function(data) {
@@ -39,11 +39,11 @@ $(document).ready(function() {
   });
 
   // jQuery Listeners
-  $('#notifications').click(function() {
+  $('#notifications-link').click(function() {
     if ($('#notifications-count').text() != "0" ||
         ! $('#notifications-dropdown ul').html().trim()) {
       $.get('/notifications/recent/', function(notifications) {
-        var recent = notificationsTemplate({ notifications: notifications });
+        var recent = miniNotificationTemplate({ notifications: notifications });
         $('#notifications-dropdown ul').empty()
         $('#notifications-dropdown ul').append(recent);
       });

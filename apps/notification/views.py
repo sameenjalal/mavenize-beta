@@ -18,3 +18,15 @@ def recent_notifications(request):
     api.reset_new_notifications_count(me)
     return HttpResponse(api.get_recent_notifications(me),
         mimetype="application/json")
+
+@login_required
+def notifications(request, page):
+    """
+    Returns the list of notifications for the logged in user.
+    """
+    if not request.is_ajax():
+        raise Http404
+
+    me = request.session['_auth_user_id']
+    return HttpResponse(api.get_notifications(me, page),
+        mimetype="application/json")

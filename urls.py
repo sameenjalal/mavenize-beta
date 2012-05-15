@@ -57,6 +57,7 @@ urlpatterns += patterns('social_graph.views',
 urlpatterns += patterns('notification.views',
     url(r'^notifications/count/$', 'new_notifications'),
     url(r'^notifications/recent/$', 'recent_notifications'),
+    url(r'^notifications/(?P<page>\d+)/$', 'notifications'),
 )
 
 urlpatterns += patterns('django.views.generic.simple',

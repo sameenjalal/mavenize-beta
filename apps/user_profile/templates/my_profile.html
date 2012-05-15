@@ -17,6 +17,7 @@
           <li><a href="#marks" data-toggle="tab">marks</a></li>
           <li><a href="#following" data-toggle="tab">following</a></li>
           <li><a href="#followers" data-toggle="tab">followers</a></li>
+          <li><a href="#notifications" data-toggle="tab">notifications</a></li>
         </ul>
         <div style="clear: both;"></div>
       </section>
@@ -36,6 +37,10 @@
           </div>
           <div class="tab-pane" id="followers">
             <ul class="users">
+            </ul>
+          </div>
+          <div class="tab-pane" id="notifications">
+            <ul>
             </ul>
           </div>
         </div>
@@ -148,6 +153,7 @@
   <script type="text/javascript" src="{{ STATIC_URL }}js/loadActivities.js"></script>
   <script type="text/javascript" src="{{ STATIC_URL }}js/loadMovies.js"></script>
   <script type="text/javascript" src="{{ STATIC_URL }}js/loadUsers.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/loadNotifications.js"></script>
   <script type="text/javascript" src="{{ STATIC_URL }}js/modals.js"></script>
   <script type="text/javascript" src="{{ STATIC_URL }}js/ratingForm.js"></script>
 {% endblock %}
