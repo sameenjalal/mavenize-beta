@@ -10,10 +10,15 @@
           </a>\
           <img src='<%= STATIC_URL %>img/<%= activity.rating %>l.png' />\
         </div>\
-        <div class='item-thumbnail pull-right'>\
-          <a class='thumbnail span2' href='<%= activity.target_url %>'>\
+        <div class='item-thumbnail pull-right span2'>\
+          <a class='thumbnail' href='<%= activity.target_url %>'>\
             <img src='<%= activity.target_image %>' />\
           </a>\
+          <% if (activity.bookmarked) { %>\
+            <button class='btn btn-warning btn-bookmark' value='<%= activity.item_id %>'>Unmark</button>\
+          <% } else { %>\
+            <button class='btn btn-success btn-bookmark' value='<%= activity.item_id %>'>Mark It</button>\
+          <% } %>\
         </div>\
         <div class='review-context'>\
           <a href='<%= activity.sender_url %>'><%= activity.sender_full_name %></a>\
@@ -50,6 +55,22 @@
         var raves = activityTemplate({ activities: activities });
         listSelector.append(raves);
         listSelector.trigger('appended');
+      });
+
+      listSelector.bind('appended', function() {
+        $('.btn-bookmark').click(function() {
+          var button = $(this);
+          if (button.text() == 'Mark It') {
+            $.ajax({
+              type: 'POST',
+              url: '/bookmark/' + button.val() + '/',
+              data: { csrfmiddlewaretoken: CSRF_TOKEN },
+              success: function() {
+                button.toggleClass('btn')
+              }
+            });
+          }
+        });         
       });
     } 
 }) (jQuery);
