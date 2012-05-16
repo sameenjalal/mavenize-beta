@@ -121,11 +121,17 @@ def queue_notification(sender_id, recipient_id, model_name, obj_id):
     """
     model = get_model(MODEL_APP_NAME[model_name], model_name)
     try:
-        pg_notification = Notification.objects.create(
+        pg_notification = Notification(
             sender=User.objects.get(pk=sender_id),
             recipient=User.objects.get(pk=recipient_id),
-            notice_object=model.objects.get(pk=obj_id)
+            notification_type=model_name
         )
+        if model_name == "agree" or model_name == "thank":
+            obj = model.objects.get(pk=obj_id)
+            pg_notification.item = obj.review.item
+            if model_name == "thank":
+                pg_notification.note = obj.note
+        pg_notification.save()
 
         new_key = "user:" + str(recipient_id) + ":new"
 
@@ -228,24 +234,6 @@ def remove_activity(sender_id, verb, model_name, obj_id):
             app_label=MODEL_APP_NAME[model_name],
             model=model_name),
         object_id=obj_id
-    ).delete()
-
-def remove_notification(sender_id, recipient_id, model_name, obj_id):
-    """
-    Removes a notification for an agree, thanks, bookmark, or follow.
-        sender_id: review.user_id or agree.user_id
-        recipient_id: review.user_id or agree.user_id
-        verb: either "raved about" or "re-raved"
-        model_name: string of class name
-        obj_id: object.pk
-    """
-    Notification.objects.get(
-        sender=sender_id,
-        recipient=recipient_id,
-        content_type=ContentType.objects.get(
-            app_label=MODEL_APP_NAME[model_name],
-            model=model_name),
-        object_id=obj_id,
     ).delete()
 
 def remove_karma_action(recipient_id, giver_id, karma, time_range):

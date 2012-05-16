@@ -320,7 +320,9 @@ def get_notifications(user_id, page):
     """
     notifications = \
         Notification.objects.select_related('sender',
-                                            'sender__userprofile') \
+                                            'sender__userprofile',
+                                            'item',
+                                            'item__movie') \
                             .filter(recipient=user_id) \
                             .order_by('-created_at')
     paginator = Paginator(notifications, 20)
@@ -347,20 +349,18 @@ def _generate_notification_response(notification, next_page):
         'user_url': reverse('user-profile',
             args=[notification.sender_id]),
         'user_avatar': notification.sender.userprofile.thumbnail.url,
-        'message': MESSAGES[notification.content_type.__str__()],
+        'message': MESSAGES[notification.notification_type],
         'time_since': timesince(notification.created_at),
         'next': next_page 
     }
-    if (notification.content_type.__str__() == "thank" or 
-            notification.content_type.__str__() == "agree"):
-        item_type = notification.notice_object.review.item.item_type
-        response['item_name'] = \
-            getattr(notification.notice_object.review.item,
-                    item_type).__str__()
+    if (notification.notification_type == "thank" or 
+            notification.notification_type == "agree"):
+        item_type = notification.item.item_type
+        response['item_name'] = getattr(notification.item, item_type).__str__()
         response['item_url'] = reverse(item_type+'-profile',
             args=[slugify(response['item_name'])])
-        if notification.content_type.__str__() == "thank":
-            response['thank_you'] = escape(notification.notice_object.note)
+        if notification.notification_type == "thank":
+            response['thank_you'] = escape(notification.note)
     
     return response
 

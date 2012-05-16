@@ -41,7 +41,9 @@ def _cache_notifications_for_user(user_id, num_notifications):
             (integer)
     """
     notifications = \
-        Notification.objects.select_related('sender') \
+        Notification.objects.select_related('sender',
+                                            'item',
+                                            'item__movie') \
                             .filter(recipient=user_id) \
                             .order_by('-created_at')[:num_notifications]
     recent_key = "user:" + str(user_id) + ":recent"
@@ -99,15 +101,14 @@ def _convert_notification_to_redis_cache(notification):
     redis_notification = {
         'sender_id': notification.sender_id,
         'sender_name': notification.sender.get_full_name(),
-        'notification_type': notification.content_type.__str__(),
+        'notification_type': notification.notification_type,
         'timestamp': notification.created_at
     }
-    if (notification.content_type.__str__() == "thank" or 
-            notification.content_type.__str__() == "agree"):
-        redis_notification['item_type'] = \
-            notification.notice_object.review.item.item_type
+    if (notification.notification_type == "thank" or 
+            notification.notification_type == "agree"):
+        redis_notification['item_type'] = notification.item.item_type
         redis_notification['item_name'] = \
-            getattr(notification.notice_object.review.item,
+            getattr(notification.item,
                     redis_notification['item_type']).__str__()
 
     return redis_notification

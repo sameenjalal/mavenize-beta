@@ -272,12 +272,6 @@ def delete_agree(sender, instance, **kwargs):
         model_name="review",
         obj_id=instance.review_id
     )
-    signalAPI.remove_notification(
-        sender_id=instance.giver_id,
-        recipient_id=instance.review.user_id,
-        model_name="agree",
-        obj_id=instance.pk
-    )
     signalAPI.remove_karma_action(
         recipient_id=instance.review.user_id,
         giver_id=instance.giver_id,
@@ -398,12 +392,6 @@ def delete_thank(sender, instance, **kwargs):
         instance.review
     except ObjectDoesNotExist:
         return False
-    signalAPI.remove_notification(
-        sender_id=instance.giver_id,
-        recipient_id=instance.review.user_id,
-        model_name="thank",
-        obj_id=instance.pk
-    )
     signalAPI.remove_karma_action(
         recipient_id=instance.review.user_id,
         giver_id=instance.giver_id,
