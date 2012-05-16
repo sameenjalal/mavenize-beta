@@ -10,6 +10,7 @@ from django.utils.timesince import timesince
 
 from activity_feed.models import Activity
 from bookmark.models import Bookmark, BookmarkGroup
+from item.models import Item
 from leaderboard.models import KarmaAction
 from movie.models import Movie, Genre, Actor, Director
 from notification.models import Notification
@@ -384,6 +385,17 @@ def follow(source_id, destination_id):
                                    source_id=source_id)
 
 
+def bookmark(user_id, item_id):
+    """
+    Creates a bookmark for a user on a given item if he hasn't already
+    bookmarked it.
+        user_id: primary key of the user (integer)
+        item_id: primary key of the item (integer)
+    """
+    Bookmark.objects.get_or_create(user=User.objects.get(pk=user_id),
+                                   item=Item.objects.get(pk=item_id))
+
+
 def review(user_id, item_id, text, rating):
     """
     Creates a review for an item if the user has previously not
@@ -483,3 +495,10 @@ def unfollow(source_id, destination_id):
     Backward.objects.filter(destination_id=destination_id,
                             source_id=source_id).delete()
 
+def unbookmark(user_id, item_id):
+    """
+    Deletes a bookmark for a user on a given item.
+        user_id: primary key of the user (integer)
+        item_id: primary key of the item (integer)
+    """
+    Bookmark.objects.filter(user=user_id, item=item_id).delete()

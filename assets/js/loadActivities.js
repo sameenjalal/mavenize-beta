@@ -66,7 +66,19 @@
               url: '/bookmark/' + button.val() + '/',
               data: { csrfmiddlewaretoken: CSRF_TOKEN },
               success: function() {
-                button.toggleClass('btn')
+                button.toggleClass('btn-warning').toggleClass('btn-success');
+                button.text('Unmark');
+              }
+            });
+          }
+          else {
+            $.ajax({
+              type: 'POST',
+              url: '/unbookmark/' + button.val() + '/',
+              data: { csrfmiddlewaretoken: CSRF_TOKEN },
+              success: function() {
+                button.toggleClass('btn-warning').toggleClass('btn-success');
+                button.text('Mark It');
               }
             });
           }
