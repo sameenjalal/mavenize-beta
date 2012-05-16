@@ -97,6 +97,9 @@
         <img src="{{ im.url }}" />
         {% endthumbnail %}
       </div>
+      <div id="user-interaction">
+        <button class="btn btn-large btn-sidebar {%if has_bookmarked %}btn-warning{% else %}btn-success{% endif %} btn-bookmark" value="{{ movie.pk }}">{% if has_bookmarked %}Unmark{% else %}Mark It{% endif %}</button>
+      </div>
       <div id="chart-wrapper" class="module-container border">
         <div id="rating-chart">
           <h3 class="heading">Ratings</h3>
@@ -159,6 +162,31 @@
           $('#synopsis').append(data.synopsis);
         });
       });
+      $('.btn-bookmark').click(function() {
+          var button = $(this);
+          if ($.trim(button.text()) == 'Mark It') {
+            $.ajax({
+              type: 'POST',
+              url: '/bookmark/' + button.val() + '/',
+              data: { csrfmiddlewaretoken: CSRF_TOKEN },
+              success: function() {
+                button.toggleClass('btn-warning').toggleClass('btn-success');
+                button.text('Unmark');
+              }
+            });
+          }
+          else {
+            $.ajax({
+              type: 'POST',
+              url: '/unbookmark/' + button.val() + '/',
+              data: { csrfmiddlewaretoken: CSRF_TOKEN },
+              success: function() {
+                button.toggleClass('btn-warning').toggleClass('btn-success');
+                button.text('Mark It');
+              }
+            });
+          }
+        }); 
     });
   </script>
   <script type="text/javascript" src="{{ STATIC_URL }}js/vendor/django.csrf.js"></script>

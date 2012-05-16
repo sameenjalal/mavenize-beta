@@ -50,7 +50,7 @@
         <img src="{{ user.userprofile.avatar.url }}" />
       </div>
       <div id="user-interaction">
-        <button id="sidebar-follow" class="btn btn-large {%if is_following %}btn-warning{% else %}btn-success{% endif %} btn-follow" value="{{ user.id }}">
+        <button class="btn btn-large btn-sidebar {%if is_following %}btn-warning{% else %}btn-success{% endif %} btn-follow" value="{{ user.id }}">
         {% if is_following %}
           Unfollow
         {% else %}

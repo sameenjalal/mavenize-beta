@@ -10,6 +10,7 @@ from django.utils.html import escape, linebreaks
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.core import serializers
 
+from bookmark.models import Bookmark
 from movie.models import Movie, Genre, Actor, Director
 from review.models import Agree, ReviewForm
 from social_graph.models import Forward
@@ -84,7 +85,8 @@ def profile(request, title):
                 ).exclude(agree__giver__in=global_exclude),
             'form': ReviewForm(),
             'links': movie.item.link_set.all(),
-            'has_reviewed': reviews.filter(user=me).count()
+            'has_reviewed': reviews.filter(user=me).count(),
+            'has_bookmarked': Bookmark.objects.filter(user=me, item=movie.pk).count()
         }
     except:
         raise Http404
