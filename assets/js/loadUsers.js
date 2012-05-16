@@ -28,7 +28,7 @@
         $(listSelector).trigger('appended');
       });
 
-      $('.users').bind('appended', function() {
+      listSelector.bind('appended', function() {
         $('.btn-follow').click(function() {
           var button = $(this);
           if (button.text() == 'Follow') {
@@ -37,7 +37,6 @@
               url: '/follow/' + button.val() + '/',
               data: { csrfmiddlewaretoken: CSRF_TOKEN },
               success: function() {
-                button.toggleClass('btn-follow').toggleClass('btn-unfollow');
                 button.toggleClass('btn-warning').toggleClass('btn-success');
                 button.text('Unfollow');
               }
@@ -49,7 +48,6 @@
               url: '/unfollow/' + button.val() +'/',
               data: { csrfmiddlewaretoken: CSRF_TOKEN },
               success: function() {
-                button.toggleClass('btn-follow').toggleClass('btn-unfollow');
                 button.toggleClass('btn-warning').toggleClass('btn-success');
                 button.text('Follow');
               }
