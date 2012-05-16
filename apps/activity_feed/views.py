@@ -40,5 +40,5 @@ def activity(request, page):
     """
     me = request.session['_auth_user_id']
     following = api.get_following(me)
-    return HttpResponse(api.get_user_activity(following, page),
+    return HttpResponse(api.get_user_activity(me, following, page),
         mimetype="application/json")

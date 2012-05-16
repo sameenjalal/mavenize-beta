@@ -40,7 +40,7 @@ def activity(request, user_id, page):
     if not request.is_ajax():
         raise Http404
 
-    return HttpResponse(api.get_user_activity([user_id], page),
+    return HttpResponse(api.get_user_activity(me, [user_id], page),
         mimetype="application/json")
 
 @login_required
