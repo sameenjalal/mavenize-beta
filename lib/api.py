@@ -63,7 +63,7 @@ def get_bookmarked_items(user_id):
     return list(Bookmark.objects.filter(user=user_id).values_list(
         'item_id', flat=True))
 
-def get_user_activity(user_ids, page):
+def get_user_activity(my_id, user_ids, page):
     """
     Returns the activities of the users specified in a list of user
     IDs in JSON.
@@ -77,6 +77,7 @@ def get_user_activity(user_ids, page):
                                       'target_object__item',
                                       'target_object__item__movie') \
                     .filter(sender__in=user_ids)
+    bookmarks = get_bookmarked_items(my_id)
 
     paginator = Paginator(activities, 20)
     
@@ -109,6 +110,9 @@ def get_user_activity(user_ids, page):
                                           .first_name.lower(),
         'text': linebreaks(escape(activity.target_object.text)),
         'time_since': timesince(activity.created_at),
+        'item_id': activity.target_object.item_id,
+        'bookmarked': (True if activity.target_object.item_id in 
+                            bookmarks else False),
         'next': next_page 
     } for activity in activities]
 
@@ -299,8 +303,9 @@ def get_recent_notifications(user_id):
                         ).url,
         'message': MESSAGES[notification['notification_type']],
         'item_name': notification.get('item_name', ''),
-        'item_url': reverse(notification['item_type']+'-profile',
-            args=[slugify(notification.get('item_name', 'none'))]),
+        'item_url': (reverse(notification['item_type']+'-profile',
+                args=[slugify(notification.get('item_name', 'none'))])
+                        if notification.get('item_type') else ''),
         'time_since': timesince(notification['timestamp'])
     } for notification in raw_notifications]
 
@@ -316,8 +321,6 @@ def get_notifications(user_id, page):
     notifications = \
         Notification.objects.select_related('sender',
                                             'sender__userprofile') \
-                            .prefetch_related(
-                                    'notice_object__review__item') \
                             .filter(recipient=user_id) \
                             .order_by('-created_at')
     paginator = Paginator(notifications, 20)
@@ -335,7 +338,7 @@ def get_notifications(user_id, page):
 
 def _generate_notification_response(notification, next_page):
     """
-    Converts a notification into a Python dictioanry that will
+    Converts a notification into a Python dictionary that will
     be returned as JSON.
         notification: Notification object
     """

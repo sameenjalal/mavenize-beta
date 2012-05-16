@@ -42,8 +42,6 @@ def _cache_notifications_for_user(user_id, num_notifications):
     """
     notifications = \
         Notification.objects.select_related('sender') \
-                            .prefetch_related(
-                                'notice_object__review__item') \
                             .filter(recipient=user_id) \
                             .order_by('-created_at')[:num_notifications]
     recent_key = "user:" + str(user_id) + ":recent"
