@@ -31,7 +31,7 @@
       listSelector.bind('appended', function() {
         $('.btn-follow').click(function() {
           var button = $(this);
-          if (button.text() == 'Follow') {
+          if ($.trim(button.text()) == 'Follow') {
             $.ajax({
               type: 'POST',
               url: '/follow/' + button.val() + '/',
