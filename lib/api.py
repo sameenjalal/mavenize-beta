@@ -366,6 +366,15 @@ def _generate_notification_response(notification, next_page):
     return response
 
 
+def get_new_bookmarks_count(user_id):
+    """
+    Returns the number of new bookmarks for a user.
+        user_id: primary key of the user (integer)
+    """
+    return simplejson.dumps(
+        cacheAPI._get_new_bookmarks_count(user_id))
+
+
 """
 CREATE METHODS
 """
@@ -479,6 +488,13 @@ def reset_new_notifications_count(user_id):
         user_id: primary key of the user (integer)
     """
     cacheAPI._reset_new_notifications_count(user_id)
+
+def reset_new_bookmarks_count(user_id):
+    """
+    Resets the number of new bookmarks for a user to zero.
+        user_id: primary key of the user (integer)
+    """
+    cacheAPI._reset_new_bookmarks_count(user_id)
 
 """
 DELETE METHODS

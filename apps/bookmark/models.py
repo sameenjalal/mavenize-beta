@@ -50,6 +50,10 @@ def create_bookmark(sender, instance, created, **kwargs):
             obj_id=instance.item_id,
             bookmarks=1
         )
+        signalAPI.queue_bookmark_notifications(
+            user_id=instance.user_id,
+            item_id=instance.item_id
+        )
 
 
 @receiver(post_delete, sender=Bookmark)

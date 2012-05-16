@@ -24,3 +24,12 @@ def unbookmark(request, item_id):
             return HttpResponse(status=500)
 
     raise Http404
+
+@login_required
+def new_bookmarks(request):
+    if not request.is_ajax():
+        raise Http404
+
+    me = request.session['_auth_user_id']
+    return HttpResponse(api.get_new_bookmarks_count(me),
+        mimetype="application/json")

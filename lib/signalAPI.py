@@ -4,6 +4,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import get_model, F
 
 from activity_feed.models import Activity
+from bookmark.models import Bookmark
 from notification.models import Notification
 from leaderboard.models import KarmaAction
 from social_auth.models import UserSocialAuth
@@ -133,17 +134,14 @@ def queue_notification(sender_id, recipient_id, model_name, obj_id):
                 pg_notification.note = obj.note
         pg_notification.save()
 
-        new_key = "user:" + str(recipient_id) + ":new"
-
         if not cacheAPI._get_new_notifications_count(recipient_id):
             cacheAPI._reset_new_notifications_count(recipient_id)
         cacheAPI._increment_new_notifications_count(recipient_id)
         cacheAPI._cache_notification_for_user(pg_notification)
         announce_client.emit(
             recipient_id,
-            'notifications',
-            data={ 'new': cacheAPI._get_new_notifications_count(
-                                recipient_id) }
+            'notification',
+            data={ 'new': 1 } # Currently un-used
         )
 
     except ObjectDoesNotExist:
@@ -165,6 +163,35 @@ def add_karma_action(recipient_id, giver_id, karma):
         )
     except ObjectDoesNotExist:
         pass
+
+
+def queue_bookmark_notifications(user_id, item_id):
+    """
+    Emits a notification via SocketIO to the friends of the user
+    who have bookmarked the same item.
+        user_id: the primary key of the user (integer)
+        item_id: the primary key of the item (integer)
+    """
+    following = list(Forward.objects.filter(source_id=user_id)
+                            .values_list('destination_id', flat=True))
+    followers =list(Backward.objects.filter(destination_id=user_id)
+                            .values_list('source_id', flat=True))
+    friends = list(set(following) & set(followers))
+    to_notify = Bookmark.objects.filter(user__in=friends, item=item_id) \
+                                .values_list('user_id', flat=True)
+    for user in to_notify:
+        if not cacheAPI._get_new_bookmarks_count(user):
+            cacheAPI._reset_new_bookmarks_count(user)
+        cacheAPI._increment_new_bookmarks_count(user)
+        announce_client.register_group(user, 'bookmarks')
+    announce_client.broadcast_group(
+        group_name='bookmarks',
+        channel='bookmark',
+        data = { 'new': 1 } # Currently un-used
+    )
+    for user in to_notify:
+        announce_client.unregister_group(user, 'bookmarks')
+
 
 def build_social_graph(user_id):
     """

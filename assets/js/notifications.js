@@ -30,12 +30,14 @@ $(document).ready(function() {
   var badge = $("<span/>", { class: "badge badge-info", id: "notifications-count" });
   $.get('/notifications/count/', function(count) {
     badge.text(count | 0);
-  })
+  });
   $('#notifications-link').append(badge);
 
   // SocketIO Listeners
-  announce.on('notifications', function(data) {
-    $('#notifications-count').text(data.new);
+  announce.on('notification', function(data) {
+    var currentCount = parseInt($('#notifications-count').text());
+    alert(currentCount);
+    $('#notifications-count').text((currentCount + data.new).toString());
   });
 
   // jQuery Listeners

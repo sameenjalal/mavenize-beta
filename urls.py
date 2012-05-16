@@ -58,6 +58,8 @@ urlpatterns += patterns('social_graph.views',
 urlpatterns += patterns('bookmark.views',
     url(r'^bookmark/(?P<item_id>\d+)/$', 'bookmark'),
     url(r'^unbookmark/(?P<item_id>\d+)/$', 'unbookmark'),
+
+    url(r'^bookmarks/count/$', 'new_bookmarks'),
 )
 
 urlpatterns += patterns('notification.views',
