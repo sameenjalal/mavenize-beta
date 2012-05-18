@@ -1,0 +1,40 @@
+#bookmarks {
+  height: 700px;
+  left: 35%;
+  margin: -320px 0 0 -300px;
+  width: 940px;
+
+  .bookmark-container {
+    width: 900px; 
+  }
+
+  .bookmark {
+    background: @contrastFill;
+    height: 192px;
+    padding: 5px;
+
+    .Border();
+    .RoundedCorners(0);
+
+    img {
+      height: 192px;
+    }
+  }
+
+  .bookmark:hover {
+    border-color: @linkColor;
+  }
+}
+
+.bookmarks-table {
+    margin: 0;
+
+    td {
+      border: none;
+      vertical-align: middle;
+    }
+
+    .bookmark-thumbnail {
+      width: 50px;
+    }
+  }

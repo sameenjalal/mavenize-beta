@@ -60,6 +60,8 @@ urlpatterns += patterns('bookmark.views',
     url(r'^unbookmark/(?P<item_id>\d+)/$', 'unbookmark'),
 
     url(r'^bookmarks/count/$', 'new_bookmarks'),
+    url(r'^bookmarks/(?P<page>\d+)/$', 'bookmarks'),
+    url(r'^bookmarks/item/(?P<item_id>\d+)/$', 'friend_bookmarks'),
 )
 
 urlpatterns += patterns('notification.views',

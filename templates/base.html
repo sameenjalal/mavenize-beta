@@ -23,6 +23,12 @@
   <div id="body">
     {% block body %}{% endblock %}
   </div>
+  <section id="modals">
+    <div class="modal hide fade" id="disagree"></div>
+    <div class="modal hide fade" id="thank"></div>
+    <div class="modal hide fade" id="edit"></div>
+    <div class="modal hide fade" id="bookmarks"></div>
+  </section>
 
   <footer>
     {% include "footer.html" %}
@@ -33,6 +39,7 @@
   <script type="text/javascript" src="{{ STATIC_URL }}js/vendor/bootstrap.min.js"></script>
   <script type="text/javascript" src="{{ STATIC_URL }}js/vendor/less.min.js"></script>
   {% announce_js %}
+  <script type="text/javascript" src="{{ STATIC_URL }}js/loadBookmarks.js"></script>
   <script type="text/javascript" src="{{ STATIC_URL }}js/notifications.js"></script>
   <script type="text/javascript" src="{{ STATIC_URL }}js/bookmarks.js"></script>
 

@@ -1,8 +1,9 @@
 from django.core.cache import get_cache
 from notification.models import Notification
 
-notifications_cache = get_cache('notifications')
+import datetime as dt
 
+notifications_cache = get_cache('notifications')
 
 """
 GET METHODS
@@ -39,6 +40,15 @@ def _get_new_bookmarks_count(user_id):
     """
     new_key = "user:" + str(user_id) + ":new.bookmarks"
     return notifications_cache.get(new_key)
+
+def _get_bookmarks_last_checked(user_id):
+    """
+    Returns the datetime of the last time the user checked their
+    bookmarks.
+        user_id: primary key of the user (integer)
+    """
+    time_key = "user:" + str(user_id) + ":last.checked.bookmarks"
+    return notifications_cache.get(time_key)
 
 
 """
@@ -106,8 +116,12 @@ def _reset_new_bookmarks_count(user_id):
     Resets the number of new bookmarks for a user to zero.
         user_id: primary key of the user (integer)
     """
-    new_key = "user:" + str(user_id) + ":new.bookmarks"
-    notifications_cache.set(new_key, 0)
+    data = {
+        "user:" + str(user_id) + ":new.bookmarks": 0,
+        "user:" + str(user_id) + ":last.checked.bookmarks": \
+            dt.datetime.now()
+    }
+    notifications_cache.set_many(data, 0)
 
 def _increment_new_bookmarks_count(user_id):
     """

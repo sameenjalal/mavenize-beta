@@ -87,8 +87,6 @@
         {% endif %}
         </div>
       </section>
-      <div class="modal fade" id="disagree"></div>
-      <div class="modal fade" id="thank"></div>
     </div>
     <div id="sidebar" class="span3">
       <div class="thumbnail">
@@ -131,11 +129,20 @@
       </div>
       <div id="friend-bookmarks" class="module-container border">
         <h3 class="heading">Watch It!</h3>
-        <table id="bookmarks-table" class="table">
+        <table class="table bookmarks-table">
             {% for bookmark in friend_bookmarks %}
               <tr>
-                <td><img src="{{ bookmark.user.userprofile.thumbnail.url }}" /></td>
-                <td><a href="#">{{ bookmark.user.get_full_name }}</a></td>
+                <td class="bookmark-thumbnail">
+                  <a href="{% url user-profile bookmark.user_id %}">
+                  <img src="{{ bookmark.user.userprofile.thumbnail.url }}" />
+                  </a>
+                </td>
+                <td>
+                  <a href="{% url user-profile bookmark.user_id %}">
+                  {{ bookmark.user.get_full_name }}
+                  </a>
+                </td>
+              </tr>
             {% empty %}
               <p class="empty-message">Be the first among your friends to mark {{ movie.title }}!</p>
             {% endfor %}

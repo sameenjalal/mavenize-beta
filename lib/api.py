@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.core.urlresolvers import reverse
-from django.db.models import Sum
+from django.db.models import Sum, Count
 from django.template.defaultfilters import slugify
 from django.utils import simplejson
 from django.utils.html import escape, linebreaks
@@ -19,6 +19,8 @@ from social_graph.models import Forward, Backward
 from user_profile.models import UserProfile, UserStatistics
 
 from sorl.thumbnail import get_thumbnail
+from utils import QuerySetChain
+import datetime as dt
 import cacheAPI
 
 MESSAGES = {
@@ -55,6 +57,14 @@ def get_followers(user_id):
     return list(Backward.objects.filter(destination_id=user_id) \
                                 .values_list('source_id', flat=True))
 
+def get_friends(user_id):
+    """
+    Returns a list of users who the follow the user AND ALSO the user
+    follows them.
+        user_id: primary key of the user (integer)
+    """
+    return list(set(get_following(user_id)) &
+                set(get_followers(user_id)))
 
 def get_bookmarked_items(user_id):
     """
@@ -96,7 +106,7 @@ def get_user_activity(my_id, user_ids, page):
         'target_url': reverse('movie-profile',
             args=[activity.target_object.item.movie.url]),
         'target_image': get_thumbnail(
-            activity.target_object.item.movie.image, 'x295').url,
+            activity.target_object.item.movie.image, 'x285').url,
         'target_title': activity.target_object.item.movie.title,
         'sender_id': activity.sender_id,
         'sender_url': reverse('user-profile', args=[activity.sender_id]),
@@ -115,7 +125,7 @@ def get_user_activity(my_id, user_ids, page):
         'bookmarked': (True if activity.target_object.item_id in 
                             bookmarks else False),
         'next': next_page 
-    } for activity in activities]
+    } for activity in paginator.page(page)]
 
     return simplejson.dumps(response)
  
@@ -374,6 +384,59 @@ def get_new_bookmarks_count(user_id):
     return simplejson.dumps(
         cacheAPI._get_new_bookmarks_count(user_id))
 
+
+def get_bookmarked_movies(user_id, page):
+    """
+    Returns the bookmarks of the user for the bookmarks modal.
+        user_id: primary key of the user (integer)
+        page: page number (integer)
+    """
+    friends = get_friends(user_id)
+    my_bookmarks = get_bookmarked_items(user_id)
+    last_checked = (cacheAPI._get_bookmarks_last_checked(user_id) or
+                    dt.datetime.min)
+
+    recent_bookmarks = Movie.objects.filter(
+            item__pk__in=my_bookmarks,
+            item__bookmark__created_at__gte=last_checked,
+            item__bookmark__user__in=friends)
+    recent_item_ids = recent_bookmarks.values_list('item', flat=True)
+    not_recent = list(set(my_bookmarks) - set(recent_item_ids))
+    other_bookmarks = Movie.objects.filter(item__pk__in=not_recent) \
+                                   .values('item_id', 'url', 'image')
+    annotated = recent_bookmarks.values('item_id', 'url', 'image') \
+            .annotate(new_bookmarks=Count('item__bookmark__user')) \
+            .order_by('-new_bookmarks')
+    combined = QuerySetChain(annotated, other_bookmarks)
+    paginator = Paginator(combined, 12)
+    response = [{
+        'item_id': movie['item_id'],
+        'url': movie['url'],
+        'image_url': get_thumbnail(movie['image'], 'x285').url,
+        'new_bookmarks': movie.get('new_bookmarks', 0)
+    } for movie in paginator.page(page)]
+
+    return simplejson.dumps(response)
+
+
+def get_friend_bookmarks(user_id, item_id):
+    """
+    Returns the friends who have bookmarked the movie title.
+        user_id: primary key of the user (integer)
+        item_id: primary key of the item (integer) 
+    """
+    friends = get_friends(user_id)
+    bookmarks = Bookmark.objects.select_related('user', 'userprofile') \
+                                .filter(user__in=friends, item=item_id) \
+                                .order_by('-created_at')
+
+    response = [{
+        'user_name': bookmark.user.get_full_name(),
+        'user_url': reverse('user-profile', args=[bookmark.user_id]),
+        'user_thumbnail': bookmark.user.userprofile.thumbnail.url
+    } for bookmark in bookmarks]
+
+    return simplejson.dumps(response)
 
 """
 CREATE METHODS
