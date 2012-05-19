@@ -244,23 +244,26 @@ else:
         'PASSWORD': ''
     }
 
-# Message Broker (for Celery)
+############################
+# Message Broker for Celery
+############################
+import djcelery
+djcelery.setup_loader()
 
-BROKER_HOST = "localhost"
-BROKER_PORT = 5672
-BROKER_USER = "celery"
-BROKER_PASSWORD = "django"
-BROKER_VHOST = "/"
-CELERY_RESULT_BACKEND = "amqp"
+BROKER_URL = "redis://mavenize:&Hunt3RK!ll3r$@209.61.142.151:6379:3"
+CELERY_RESULT_BACKEND = "redis"
+CELERY_REDIS_HOST = "209.61.142.151"
+CELERY_REDIS_PORT = "6379"
+CELERY_REDIS_DB = 4
+CELERY_REDIS_PASSWORD = "&Hunt3RK!ll3r"
 
-# Run tasks eagerly in development, so developers don't have to keep a celeryd
-# processing running.
 CELERY_ALWAYS_EAGER = is_solo()
 CELERY_EAGER_PROPAGATES_EXCEPTIONS = True
 
+############################
 # South
+############################
 
-# Speed up testing when you have lots of migrations.
 SOUTH_TESTS_MIGRATE = False
 SKIP_SOUTH_TESTS = True
 
@@ -445,6 +448,7 @@ apps_list = [
         'sorl.thumbnail',
         'haystack',
         'announce',
+        'djcelery',
 ]
 
 if is_solo() or is_dev():
@@ -467,6 +471,7 @@ INSTALLED_APPS = tuple(apps_list)
 ############################
 # Nexus Configuration
 ############################
+
 NEXUS_REDIS_CONNECTIONS = [
     { 'host': '209.61.142.151',
       'password': '&hunt3rk!ll3r$',
