@@ -5,16 +5,23 @@ import logging, logging.handlers
 import environment
 import logconfig
 
-# Make filepaths relative to settings.
+############################
+# Relative Filepaths
+############################
+
 path = lambda root,*a: os.path.join(root, *a)
 ROOT = os.path.dirname(os.path.abspath(__file__))
 
-# List of admin e-mails - we use Hoptoad to collect error notifications, so this
-# is usually blank.
+############################
+# Administrators
+############################
+
 ADMINS = ()
 MANAGERS = ADMINS
 
+############################
 # Deployment Configuration
+############################
 
 class DeploymentType:
     PRODUCTION = "PRODUCTION"
@@ -39,6 +46,13 @@ def is_solo():
 def is_dev():
     return DEPLOYMENT == DeploymentType.DEV
 
+def is_prod():
+    return DEPLOYMENT == DeploymentType.PRODUCTION
+
+############################
+# Site ID and Debugging 
+############################
+
 SITE_ID = DeploymentType.dict[DEPLOYMENT]
 
 DEBUG = DEPLOYMENT != DeploymentType.PRODUCTION
@@ -48,16 +62,19 @@ SSL_ENABLED = not DEBUG
 
 INTERNAL_IPS = ('127.0.0.1',)
 
-# Logging
+############################
+# Logging 
+############################
 
 if DEBUG:
     LOG_LEVEL = logging.DEBUG
 else:
     LOG_LEVEL = logging.INFO
 
+############################
 # Cache Backend
-# Don't require developers to install memcached, and also make debugging easier
-# because cache is automatically wiped when the server reloads.
+############################
+
 if is_solo() or is_dev():
     CACHES = {
         'default': {
@@ -92,34 +109,36 @@ else:
                 'PASSWORD': '&Hunt3RK!ll3r$',
                 'PARSER_CLASS': 'redis.connection.HiredisParser'
             }
-        },
+        }
     }
 
-# E-mail Server
+############################
+# E-mail Server 
+############################
 
 if is_solo() or is_dev():
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 else:
-    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-    EMAIL_HOST = 'smtp.gmail.com'
-    EMAIL_HOST_USER = 'YOU@YOUR-SITE.com'
-    EMAIL_HOST_PASSWORD = 'PASSWORD'
-    EMAIL_PORT = 587
-    EMAIL_USE_TLS = True
+    SENDGRID_EMAIL_HOST = 'smtp.sendgrid.net'
+    SENDGRID_EMAIL_PORT = 587
+    SENDGRID_EMAIL_USERNAME = 'mavenize'
+    SENDGRID_EMAIL_PASSWORD = '$0l$tic3919'
 
 DEFAULT_FROM_EMAIL = "Mavenize Support <admin@mavenize.me>"
-
 CONTACT_EMAIL = 'admin@mavenize.me'
 
+############################
 # Internationalization
+############################
 
 TIME_ZONE = 'UTC'
 LANGUAGE_CODE = 'en-us'
 USE_I18N = False
 
+############################
 # Testing & Coverage
+############################
 
-# Use nosetests instead of unittest
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
 COVERAGE_REPORT_HTML_OUTPUT_DIR = 'coverage'
@@ -141,7 +160,9 @@ if is_solo():
     except OSError:
         pass
 
-# Paths
+############################
+# Media and Static Files
+############################
 
 MEDIA_ROOT = path(ROOT, 'media')
 MEDIA_URL = '/media/'
@@ -155,16 +176,29 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 )
 
+if is_prod():
+    CUMULUS = {
+        'USERNAME': 'mavenize',
+        'CUMULUS_API_KEY': '7d93ad331ce171acccca10068da233dc',
+        'CUMULUS_CONTAINER': 'media',
+        'STATIC_CONTAINER': 'static'
+    }
+    DEFAULT_FILE_STORAGE = 'cumulus.storage.CloudFilesStorage'
+
+############################
 # Version Information
 
-# Grab the current commit SHA from git - handy for confirming the version
-# deployed on a remote server is the one you think it is.
+# Grab the current commit SHA from git - handy for confirming the version deployed on a remote server is the one you think it is.
+############################
+
 import subprocess
 GIT_COMMIT = subprocess.Popen(['git', 'rev-parse', '--short', 'HEAD'],
     stdout=subprocess.PIPE).communicate()[0].strip()
 del subprocess
 
-# Database
+############################
+# Database Configuration
+############################
 
 DATABASES = {}
 
@@ -175,12 +209,12 @@ if 'test' in sys.argv:
     }
 elif DEPLOYMENT == DeploymentType.PRODUCTION:
     DATABASES['default'] = {
-        'NAME': 'boilerplate',
-        'ENGINE': 'django.db.backends.mysql',
-        'HOST': 'your-database.com',
-        'PORT': '',
-        'USER': 'boilerplate',
-        'PASSWORD': 'your-password'
+        'NAME': 'mavenize_production',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'HOST': '198.101.193.156',
+        'PORT': '5432',
+        'USER': 'mavenize',
+        'PASSWORD': '@u$tr@l1aN912'
     }
 elif DEPLOYMENT == DeploymentType.DEV:
     DATABASES['default'] = {
@@ -193,12 +227,12 @@ elif DEPLOYMENT == DeploymentType.DEV:
     }
 elif DEPLOYMENT == DeploymentType.STAGING:
     DATABASES['default'] = {
-        'NAME': 'boilerplate_staging',
-        'ENGINE': 'django.db.backends.mysql',
-        'HOST': 'your-database.com',
-        'PORT': '',
-        'USER': 'boilerplate',
-        'PASSWORD': 'your-password'
+        'NAME': 'mavenize_staging',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'HOST': '198.101.193.156',
+        'PORT': '5432',
+        'USER': 'mavenize',
+        'PASSWORD': '@u$tr@l1aN912'
     }
 else:
     DATABASES['default'] = {
@@ -230,26 +264,65 @@ CELERY_EAGER_PROPAGATES_EXCEPTIONS = True
 SOUTH_TESTS_MIGRATE = False
 SKIP_SOUTH_TESTS = True
 
+############################
 # Logging
+############################
 
-SYSLOG_FACILITY = logging.handlers.SysLogHandler.LOG_LOCAL0
-SYSLOG_TAG = "boilerplate"
-
-# See PEP 391 and logconfig.py for formatting help.  Each section of LOGGING
-# will get merged into the corresponding section of log_settings.py.
-# Handlers and log levels are set up automatically based on LOG_LEVEL and DEBUG
-# unless you set them here.  Messages will not propagate through a logger
-# unless propagate: True is set.
-LOGGERS = {
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
+    'handlers': {
+        'null': {
+            'level':'DEBUG',
+            'class':'django.utils.log.NullHandler',
+        },
+        'console':{
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+        'log_file':{
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': path(ROOT, 'logs/django.log'),
+            'maxBytes': '16777216',
+            'formatter': 'verbose'
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler',
+            'include_html': True,
+        }
+    },
     'loggers': {
-        'boilerplate': {},
+        'django.request': {
+            'handlers': ['mail_admins'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+        'apps': {
+            'handlers': ['log_file'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+    'root': {
+        'handlers': ['console', 'mail_admins'],
+        'level': 'INFO'
     },
 }
 
-logconfig.initialize_logging(SYSLOG_TAG, SYSLOG_FACILITY, LOGGERS, LOG_LEVEL,
-        USE_SYSLOG)
-
+############################
 # Debug Toolbar
+############################
 
 DEBUG_TOOLBAR_CONFIG = {
     'INTERCEPT_REDIRECTS': False,
@@ -258,27 +331,40 @@ DEBUG_TOOLBAR_CONFIG = {
                       'bookmark.signals.state_changed']
 }
 
+############################
 # Application Settings
+############################
 
 SECRET_KEY = '8^q6o4zyxy%p!ltd^#t)hqmb_))e5zy^nxg151f7tf)y_@%!9-'
 
 LOGIN_URL = '/login'
 LOGIN_REDIRECT_URL = '/'
 
+############################
 # Sessions
+############################
 
-SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+if is_solo() or is_dev():
+    SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+else:
+    SESSION_ENGINE = 'redis_sessions.session'
+    SESSION_REDIS_HOST = '209.61.142.151'
+    SESSION_REDIS_PORT = 6379
+    SESSION_REDIS_DB = 2
+    SESSION_REDIS_PASSWORD = '&Hunt3RK!ll3r$'
+    SESSION_REDIS_PREFIX = 'session'
 
+############################
 # Middleware
+############################
 
 middleware_list = [
-    'commonware.log.ThreadRequestMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
     'announce.middleware.AnnounceCookieMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
 ]
 
 if is_solo():
@@ -299,7 +385,9 @@ else:
 
 MIDDLEWARE_CLASSES = tuple(middleware_list)
 
+############################
 # Templates
+############################
 
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
@@ -327,6 +415,10 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 TEMPLATE_DIRS = (
     path(ROOT, 'templates')
 )
+
+############################
+# Applications
+############################
 
 apps_list = [
         'django.contrib.auth',
@@ -365,9 +457,43 @@ if is_solo() or is_dev():
         'django_nose',
         'django_coverage',
     ]
+
+if is_prod():
+    apps_list += [
+        'cumulus',
+        'nexus_redis',
+        'sendgrid',
+    ]
+
 INSTALLED_APPS = tuple(apps_list)
 
+############################
+# Nexus Configuration
+############################
+NEXUS_REDIS_CONNECTIONS = [
+    { 'host': '209.61.142.151',
+      'password': '&hunt3rk!ll3r$',
+      'db': 0 },
+    { 'host': '209.61.142.151',
+      'password': '&hunt3rk!ll3r$',
+      'db': 1 },
+    { 'host': '209.61.142.151',
+      'password': '&hunt3rk!ll3r$',
+      'db': 2 },
+    { 'host': '209.61.142.151',
+      'password': '&hunt3rk!ll3r$',
+      'db': 3 },
+    { 'host': '209.61.142.151',
+      'password': '&hunt3rk!ll3r$',
+      'db': 4 },
+    { 'host': '209.61.142.151',
+      'password': '&hunt3rk!ll3r$',
+      'db': 5 }
+]
+
+############################
 # Social Authentication
+############################
 
 AUTHENTICATION_BACKENDS = (
     'social_auth.backends.facebook.FacebookBackend',
@@ -379,15 +505,27 @@ SOCIAL_AUTH_ASSOCIATE_URL_NAME = 'socialauth_associate_complete'
 SOCIAL_AUTH_EXTRA_DATA = True
 SOCIAL_AUTH_EXPIRATION = 'expires'
 
-# Development Facebook application
-FACEBOOK_APP_ID = '319245824782103'
-FACEBOOK_API_SECRET = 'ce2645caabfeb6e234e00d3769ce1793'
+############################
+# Facebook 
+############################
+
+if is_solo() or is_dev():
+    FACEBOOK_APP_ID = '319245824782103'
+    FACEBOOK_API_SECRET = 'ce2645caabfeb6e234e00d3769ce1793'
+else:
+    FACEBOOK_APP_ID = '184293225012617'
+    FACEBOOK_API_SECRET = '122e7c7f4489c1e55c6c2589ae8e283d'
+
 FACEBOOK_EXTENDED_PERMISSIONS = ['email', 'create_event', 'publish_stream']
 
+############################
 # User Profiles
+############################
 AUTH_PROFILE_MODULE = 'user_profile.UserProfile'
 
-# Haystack settings
+############################
+# Haystack
+############################
 HAYSTACK_CONNECTIONS = {}
 
 if is_solo() or is_dev():
