@@ -185,16 +185,20 @@ if is_prod():
     }
     DEFAULT_FILE_STORAGE = 'cumulus.storage.CloudFilesStorage'
 
+############################
 # Version Information
 
-# Grab the current commit SHA from git - handy for confirming the version
-# deployed on a remote server is the one you think it is.
+# Grab the current commit SHA from git - handy for confirming the version deployed on a remote server is the one you think it is.
+############################
+
 import subprocess
 GIT_COMMIT = subprocess.Popen(['git', 'rev-parse', '--short', 'HEAD'],
     stdout=subprocess.PIPE).communicate()[0].strip()
 del subprocess
 
-# Database
+############################
+# Database Configuration
+############################
 
 DATABASES = {}
 
@@ -205,12 +209,12 @@ if 'test' in sys.argv:
     }
 elif DEPLOYMENT == DeploymentType.PRODUCTION:
     DATABASES['default'] = {
-        'NAME': 'boilerplate',
-        'ENGINE': 'django.db.backends.mysql',
-        'HOST': 'your-database.com',
-        'PORT': '',
-        'USER': 'boilerplate',
-        'PASSWORD': 'your-password'
+        'NAME': 'mavenize_production',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'HOST': '198.101.193.156',
+        'PORT': '5432',
+        'USER': 'mavenize',
+        'PASSWORD': '@u$tr@l1aN912'
     }
 elif DEPLOYMENT == DeploymentType.DEV:
     DATABASES['default'] = {
@@ -223,12 +227,12 @@ elif DEPLOYMENT == DeploymentType.DEV:
     }
 elif DEPLOYMENT == DeploymentType.STAGING:
     DATABASES['default'] = {
-        'NAME': 'boilerplate_staging',
-        'ENGINE': 'django.db.backends.mysql',
-        'HOST': 'your-database.com',
-        'PORT': '',
-        'USER': 'boilerplate',
-        'PASSWORD': 'your-password'
+        'NAME': 'mavenize_staging',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'HOST': '198.101.193.156',
+        'PORT': '5432',
+        'USER': 'mavenize',
+        'PASSWORD': '@u$tr@l1aN912'
     }
 else:
     DATABASES['default'] = {
