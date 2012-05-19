@@ -1,0 +1,50 @@
+redis host = 209.61.142.151
+redis port = 6379
+redis db = 3
+redis password = &Hunt3RK!ll3r$
+redis prefix = session
+
+rNNw1oU12celery-1
+nEv70EUf2solr-1
+198.101.195.165 - 
+
+
+$$PIMPIN - celery
+$$YOLO - solr
+$$CAFFEINE - nodejs
+
+celery:
+sudo aptitude install python-pip
+sudo pip install pip --upgrade
+sudo pip install virtualenv
+sudo pip install celery
+sudo pip install django-celery-with- redis
+sudo touch /usr/lib/python2.7/celeryconfig.py
+cd /usr/lib/python2.7
+vim celeryconfig.py
+	BROKER_URL="redis://mavenize:&Hunt3RK!ll3r$@209.61.142.151:6379/3"
+	ELERY_RESULT_BACKEND = "redis"
+	CELERY_REDIS_HOST = "209.61.142.151"
+	CELERY_REDIS_PORT=6379
+	CELERY_REDIS_DB=4
+	CELERY_REDIS_PASSWORD="&Hunt3RK!ll3r$"
+
+
+nodejs:
+sudo apt-get npm
+
+
+solr:
+sudo apt-get install python-pip
+sudo apt-get install curl
+sudo apt-get install openjdk-7-jre-headless
+curl -O http://apache.mirrors.tds.net/lucene/solr/3.6.0/apache-solr-3.6.0.tgz
+tar xvzf apache-solr-3.6.0.tgz
+cd apache-solr-3.6.0
+cd example
+java -jar start.jar
+sudo iptables -I INPUT 1 -p tcp --dport 8983 -j ACCEPT
+sudo iptables -I INPUT 1 -p tcp --dport 22 -j ACCEPT
+sudo iptables -P INPUT DROP
+sudo sh -c "iptables-save > /etc/iptables.rules"
+
