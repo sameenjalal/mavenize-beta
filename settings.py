@@ -5,16 +5,23 @@ import logging, logging.handlers
 import environment
 import logconfig
 
-# Make filepaths relative to settings.
+############################
+# Relative Filepaths
+############################
+
 path = lambda root,*a: os.path.join(root, *a)
 ROOT = os.path.dirname(os.path.abspath(__file__))
 
-# List of admin e-mails - we use Hoptoad to collect error notifications, so this
-# is usually blank.
+############################
+# Administrators
+############################
+
 ADMINS = ()
 MANAGERS = ADMINS
 
+############################
 # Deployment Configuration
+############################
 
 class DeploymentType:
     PRODUCTION = "PRODUCTION"
@@ -42,6 +49,10 @@ def is_dev():
 def is_dev():
     return DEPLOYMENT == DeploymentType.PRODUCTION
 
+############################
+# Site ID and Debugging 
+############################
+
 SITE_ID = DeploymentType.dict[DEPLOYMENT]
 
 DEBUG = DEPLOYMENT != DeploymentType.PRODUCTION
@@ -51,16 +62,19 @@ SSL_ENABLED = not DEBUG
 
 INTERNAL_IPS = ('127.0.0.1',)
 
-# Logging
+############################
+# Logging 
+############################
 
 if DEBUG:
     LOG_LEVEL = logging.DEBUG
 else:
     LOG_LEVEL = logging.INFO
 
+############################
 # Cache Backend
-# Don't require developers to install memcached, and also make debugging easier
-# because cache is automatically wiped when the server reloads.
+############################
+
 if is_solo() or is_dev():
     CACHES = {
         'default': {
@@ -98,31 +112,33 @@ else:
         }
     }
 
-# E-mail Server
+############################
+# E-mail Server 
+############################
 
 if is_solo() or is_dev():
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 else:
-    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-    EMAIL_HOST = 'smtp.gmail.com'
-    EMAIL_HOST_USER = 'YOU@YOUR-SITE.com'
-    EMAIL_HOST_PASSWORD = 'PASSWORD'
-    EMAIL_PORT = 587
-    EMAIL_USE_TLS = True
+    SENDGRID_EMAIL_HOST = 'smtp.sendgrid.net'
+    SENDGRID_EMAIL_PORT = 587
+    SENDGRID_EMAIL_USERNAME = 'mavenize'
+    SENDGRID_EMAIL_PASSWORD = '$0l$tic3919'
 
 DEFAULT_FROM_EMAIL = "Mavenize Support <admin@mavenize.me>"
-
 CONTACT_EMAIL = 'admin@mavenize.me'
 
+############################
 # Internationalization
+############################
 
 TIME_ZONE = 'UTC'
 LANGUAGE_CODE = 'en-us'
 USE_I18N = False
 
+############################
 # Testing & Coverage
+############################
 
-# Use nosetests instead of unittest
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
 COVERAGE_REPORT_HTML_OUTPUT_DIR = 'coverage'
@@ -144,7 +160,9 @@ if is_solo():
     except OSError:
         pass
 
-# Paths
+############################
+# Media and Static Files
+############################
 
 MEDIA_ROOT = path(ROOT, 'media')
 MEDIA_URL = '/media/'
@@ -157,6 +175,15 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 )
+
+if is_prod():
+    CUMULUS = {
+        'USERNAME': 'mavenize',
+        'CUMULUS_API_KEY': '7d93ad331ce171acccca10068da233dc',
+        'CUMULUS_CONTAINER': 'media',
+        'STATIC_CONTAINER': 'static'
+    }
+    DEFAULT_FILE_STORAGE = 'cumulus.storage.CloudFilesStorage'
 
 # Version Information
 
@@ -371,6 +398,7 @@ if is_solo() or is_dev():
 
 if is_prod():
     apps_list += [
+        'cumulus',
         'sendgrid',
     ]
 INSTALLED_APPS = tuple(apps_list)
