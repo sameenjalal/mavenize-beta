@@ -6,7 +6,7 @@ import json
 import urllib2
 
 def main():
-    paths = ["lib/db/movies"]
+    paths = ["mavenize/lib/db/movies"]
 
     movie_info_url = "http://api.rottentomatoes.com/api/public/v1.0/movies/%s.json?apikey=mz7z7f9zm79tc3hcaw3xb85w"
     movie_cast_url =  "http://api.rottentomatoes.com/api/public/v1.0/movies/%s/cast.json?apikey=mz7z7f9zm79tc3hcaw3xb85w"

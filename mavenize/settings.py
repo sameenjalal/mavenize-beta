@@ -167,7 +167,7 @@ if is_solo():
 MEDIA_ROOT = path(ROOT, 'media')
 MEDIA_URL = '/media/'
 ADMIN_MEDIA_PREFIX = '/static/admin/'
-ROOT_URLCONF = 'urls'
+ROOT_URLCONF = 'mavenize.urls'
 STATIC_ROOT = path(ROOT, 'static')
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (path(ROOT, 'assets'),)
@@ -453,7 +453,6 @@ apps_list = [
 
 if is_solo() or is_dev():
     apps_list += [
-        'django_extensions',
         'debug_toolbar',
         'django_nose',
         'django_coverage',

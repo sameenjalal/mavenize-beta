@@ -78,5 +78,5 @@ urlpatterns += patterns('django.views.generic.simple',
 if settings.STATIC_MEDIA_SERVER:
     urlpatterns += patterns('',
         (r'^media/(?P<path>.*)$', 'django.views.static.serve', 
-            {'document_root': 'media'}),
+            {'document_root': 'mavenize/media'}),
 )

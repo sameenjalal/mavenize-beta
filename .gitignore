@@ -3,6 +3,7 @@
 
 /build
 /env
-/media
-/static
-/db
+/src
+/mavenize/media
+/mavenize/static
+/mavenize/db
