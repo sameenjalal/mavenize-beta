@@ -505,15 +505,27 @@ SOCIAL_AUTH_ASSOCIATE_URL_NAME = 'socialauth_associate_complete'
 SOCIAL_AUTH_EXTRA_DATA = True
 SOCIAL_AUTH_EXPIRATION = 'expires'
 
-# Development Facebook application
-FACEBOOK_APP_ID = '319245824782103'
-FACEBOOK_API_SECRET = 'ce2645caabfeb6e234e00d3769ce1793'
+############################
+# Facebook 
+############################
+
+if is_solo() or is_dev():
+    FACEBOOK_APP_ID = '319245824782103'
+    FACEBOOK_API_SECRET = 'ce2645caabfeb6e234e00d3769ce1793'
+else:
+    FACEBOOK_APP_ID = '184293225012617'
+    FACEBOOK_API_SECRET = '122e7c7f4489c1e55c6c2589ae8e283d'
+
 FACEBOOK_EXTENDED_PERMISSIONS = ['email', 'create_event', 'publish_stream']
 
+############################
 # User Profiles
+############################
 AUTH_PROFILE_MODULE = 'user_profile.UserProfile'
 
-# Haystack settings
+############################
+# Haystack
+############################
 HAYSTACK_CONNECTIONS = {}
 
 if is_solo() or is_dev():
