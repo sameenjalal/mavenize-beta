@@ -1,0 +1,23 @@
+# Install PostgreSQL
+
+sudo aptitude install postgresql
+
+# Configure postgresql.conf
+
+# Configure pg_hba.conf by adding line
+host	all		mavenize	XXX.XXX.XXX.XXX/32	md5
+
+
+# Configure Kernel SHMMAX Parameter
+sudo cp /etc/sysctl.conf /etc/sysctl.conf-orig &&
+sudo sh -c 'echo "#\n# For postgres\nkernel.shmmax = 600907776" >> /etc/sysctl.conf' &&
+sudo sysctl -p &&
+sudo service postgresql start
+
+# Configure IPTables
+
+sudo iptables -A INPUT -i eth0 -m state --state ESTABLISHED,RELATED -j ACCEPT
+sudo iptables -I INPUT 1 -p tcp  --dport 22 -j ACCEPT
+sudo iptables -I INPUT 1 -p tcp  --dport 5432 -j ACCEPT
+sudo iptables -P INPUT DROP
+sudo sh -c "iptables-save > /etc/iptables.rules"

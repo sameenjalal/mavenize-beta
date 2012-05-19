@@ -5,18 +5,9 @@ import logging, logging.handlers
 import environment
 import logconfig
 
-# logic between applications, you can also share settings. Just create another
-# settings file in your package and import it like so:
-#
-#     from comrade.core.settings import * 
-#
-# The top half of this settings.py file is copied from comrade for clarity. We
-# use the import method in actual deployments.
-
 # Make filepaths relative to settings.
 path = lambda root,*a: os.path.join(root, *a)
 ROOT = os.path.dirname(os.path.abspath(__file__))
-
 
 # List of admin e-mails - we use Hoptoad to collect error notifications, so this
 # is usually blank.
@@ -64,16 +55,7 @@ if DEBUG:
 else:
     LOG_LEVEL = logging.INFO
 
-# Only log to syslog if this is not a solo developer server.
-USE_SYSLOG = not is_solo()
-
 # Cache Backend
-
-CACHE_TIMEOUT = 3600
-MAX_CACHE_ENTRIES = 10000
-CACHE_MIDDLEWARE_SECONDS = 3600
-CACHE_MIDDLEWARE_KEY_PREFIX = ''
-
 # Don't require developers to install memcached, and also make debugging easier
 # because cache is automatically wiped when the server reloads.
 if is_solo() or is_dev():
@@ -86,14 +68,24 @@ if is_solo() or is_dev():
             'LOCATION': '127.0.0.1:6379',
             'OPTIONS': {
                 'DB': 1,
+                'PASSWORD': '&Hunt3RK!ll3r$',
                 'PARSER_CLASS': 'redis.connection.HiredisParser'
             }
         }
     }
 
 else:
-    CACHE_BACKEND = ('memcached://127.0.0.1:11211/?timeout=%(CACHE_TIMEOUT)d'
-            '&max_entries=%(MAX_CACHE_ENTRIES)d' % locals())
+    CACHES = {
+        'default': {
+            'BACKEND': 'redis_cache.cache.RedisCache',
+            'LOCATION': '209.61.142.151:6379',
+            'OPTIONS': {
+                'DB': 1,
+                'PASSWORD': '&Hunt3RK!ll3r$',
+                'PARSER_CLASS': 'redis.connection.HiredisParser'
+            }
+        }
+    }
 
 # E-mail Server
 

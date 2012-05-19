@@ -1,0 +1,16 @@
+# Install Redis Server
+sudo aptitude install build-essential
+wget http://redis.googlecode.com/files/redis-2.4.12.tar.gz
+tar xzf redis-2.4.12.tar.gz
+cd redis-2.4.12/
+sudo make && sudo make install
+sudo sysctl vm.overcommit_memory=1
+# move redis.conf to /etc/redis.conf
+
+# Configure IPTables
+
+sudo iptables -A INPUT -i eth0 -m state --state ESTABLISHED,RELATED -j ACCEPT
+sudo iptables -I INPUT 1 -p tcp  --dport 22 -j ACCEPT
+sudo iptables -I INPUT 1 -p tcp  --dport 6379 -j ACCEPT
+sudo iptables -P INPUT DROP
+sudo sh -c "iptables-save > /etc/iptables.rules"

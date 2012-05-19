@@ -1,0 +1,37 @@
+as root:
+wget http://downloads.rackerua.com/tools/UbuntuUpgrade.sh
+bash UbuntuUpgrade.sh
+adduser mavenize
+adduser mavenize sudo
+sudo aptitude update
+sudo aptitude upgrade
+
+# Remove AppArmor
+
+sudo /etc/init.d/apparmor stop
+sudo aptitude remove apparmor
+
+# Synchronize Clock
+sudo aptitude install ntp ntpdate
+
+# Install PIP and Virtualenv
+
+sudo aptitude install python-pip
+sudo pip install pip --upgrade
+sudo pip install virtualenv
+
+# Install Nginx
+
+sudo aptitude install python-software-properties
+sudo add-apt-repository ppa:nginx/stable
+sudo aptitude update
+sudo aptitude install nginx
+
+# Configure IPTables
+
+sudo iptables -A INPUT -i eth0 -m state --state ESTABLISHED,RELATED -j ACCEPT
+sudo iptables -I INPUT 1 -p tcp  --dport 22 -j ACCEPT
+sudo iptables -I INPUT 1 -p tcp --dport 80 -j ACCEPT
+sudo iptables -I INPUT 1 -p tcp --dport 443 -j ACCEPT
+sudo iptables -P INPUT DROP
+sudo sh -c "iptables-save > /etc/iptables.rules"
