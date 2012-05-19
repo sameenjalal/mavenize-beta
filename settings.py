@@ -327,8 +327,7 @@ LOGGING = {
 DEBUG_TOOLBAR_CONFIG = {
     'INTERCEPT_REDIRECTS': False,
     'EXTRA_SIGNALS': ['social_auth.signals.pre_update',
-                      'social_auth.signals.socialauth_registered',
-                      'bookmark.signals.state_changed']
+                      'social_auth.signals.socialauth_registered']
 }
 
 ############################
@@ -375,12 +374,10 @@ elif is_dev():
     middleware_list += [
         'debug_toolbar.middleware.DebugToolbarMiddleware',
         'django.middleware.transaction.TransactionMiddleware',
-        'commonware.middleware.SetRemoteAddrFromForwardedFor',
     ]
 else:
     middleware_list += [
         'django.middleware.transaction.TransactionMiddleware',
-        'commonware.middleware.SetRemoteAddrFromForwardedFor',
     ]
 
 MIDDLEWARE_CLASSES = tuple(middleware_list)
