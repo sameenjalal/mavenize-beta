@@ -354,7 +354,9 @@ else:
     SESSION_REDIS_PASSWORD = '&Hunt3RK!ll3r$'
     SESSION_REDIS_PREFIX = 'session'
 
+############################
 # Middleware
+############################
 
 middleware_list = [
     'django.middleware.common.CommonMiddleware',
@@ -383,7 +385,9 @@ else:
 
 MIDDLEWARE_CLASSES = tuple(middleware_list)
 
+############################
 # Templates
+############################
 
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
@@ -411,6 +415,10 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 TEMPLATE_DIRS = (
     path(ROOT, 'templates')
 )
+
+############################
+# Applications
+############################
 
 apps_list = [
         'django.contrib.auth',
@@ -453,11 +461,39 @@ if is_solo() or is_dev():
 if is_prod():
     apps_list += [
         'cumulus',
+        'nexus_redis',
         'sendgrid',
     ]
+
 INSTALLED_APPS = tuple(apps_list)
 
+############################
+# Nexus Configuration
+############################
+NEXUS_REDIS_CONNECTIONS = [
+    { 'host': '209.61.142.151',
+      'password': '&hunt3rk!ll3r$'
+      'db': 0 },
+    { 'host': '209.61.142.151',
+      'password': '&hunt3rk!ll3r$'
+      'db': 1 },
+    { 'host': '209.61.142.151',
+      'password': '&hunt3rk!ll3r$'
+      'db': 2 },
+    { 'host': '209.61.142.151',
+      'password': '&hunt3rk!ll3r$'
+      'db': 3 },
+    { 'host': '209.61.142.151',
+      'password': '&hunt3rk!ll3r$'
+      'db': 4 },
+    { 'host': '209.61.142.151',
+      'password': '&hunt3rk!ll3r$'
+      'db': 5 }
+]
+
+############################
 # Social Authentication
+############################
 
 AUTHENTICATION_BACKENDS = (
     'social_auth.backends.facebook.FacebookBackend',
