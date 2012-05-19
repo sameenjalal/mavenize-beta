@@ -39,6 +39,9 @@ def is_solo():
 def is_dev():
     return DEPLOYMENT == DeploymentType.DEV
 
+def is_dev():
+    return DEPLOYMENT == DeploymentType.PRODUCTION
+
 SITE_ID = DeploymentType.dict[DEPLOYMENT]
 
 DEBUG = DEPLOYMENT != DeploymentType.PRODUCTION
@@ -92,7 +95,7 @@ else:
                 'PASSWORD': '&Hunt3RK!ll3r$',
                 'PARSER_CLASS': 'redis.connection.HiredisParser'
             }
-        },
+        }
     }
 
 # E-mail Server
@@ -364,6 +367,11 @@ if is_solo() or is_dev():
         'debug_toolbar',
         'django_nose',
         'django_coverage',
+    ]
+
+if is_prod():
+    apps_list += [
+        'sendgrid',
     ]
 INSTALLED_APPS = tuple(apps_list)
 
