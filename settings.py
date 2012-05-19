@@ -46,7 +46,7 @@ def is_solo():
 def is_dev():
     return DEPLOYMENT == DeploymentType.DEV
 
-def is_dev():
+def is_prod():
     return DEPLOYMENT == DeploymentType.PRODUCTION
 
 ############################
@@ -264,24 +264,61 @@ CELERY_EAGER_PROPAGATES_EXCEPTIONS = True
 SOUTH_TESTS_MIGRATE = False
 SKIP_SOUTH_TESTS = True
 
+############################
 # Logging
+############################
 
-SYSLOG_FACILITY = logging.handlers.SysLogHandler.LOG_LOCAL0
-SYSLOG_TAG = "boilerplate"
-
-# See PEP 391 and logconfig.py for formatting help.  Each section of LOGGING
-# will get merged into the corresponding section of log_settings.py.
-# Handlers and log levels are set up automatically based on LOG_LEVEL and DEBUG
-# unless you set them here.  Messages will not propagate through a logger
-# unless propagate: True is set.
-LOGGERS = {
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
+    'handlers': {
+        'null': {
+            'level':'DEBUG',
+            'class':'django.utils.log.NullHandler',
+        },
+        'console':{
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+        'log_file':{
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': path(ROOT, 'logs/django.log'),
+            'maxBytes': '16777216',
+            'formatter': 'verbose'
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler',
+            'include_html': True,
+        }
+    },
     'loggers': {
-        'boilerplate': {},
+        'django.request': {
+            'handlers': ['mail_admins'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+        'apps': {
+            'handlers': ['log_file'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+    'root': {
+        'handlers': ['console', 'mail_admins'],
+        'level': 'INFO'
     },
 }
-
-logconfig.initialize_logging(SYSLOG_TAG, SYSLOG_FACILITY, LOGGERS, LOG_LEVEL,
-        USE_SYSLOG)
 
 # Debug Toolbar
 
