@@ -1,1 +1,2 @@
+django-cumulus==1.0.5
 django-sendgrid==0.4.3
