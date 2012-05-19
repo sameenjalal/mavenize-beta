@@ -10,6 +10,7 @@ $(document).ready(function() {
         <div class='row'>\
           <div class='span8'>\
             <ul class='thumbnails'></ul>\
+            <div class='paginator'></div>\
           </div>\
           <div class='span3'>\
             <h3>Your Friends</h3>\
@@ -60,8 +61,10 @@ $(document).ready(function() {
   });
 
   $('#bookmarks').bind('appended', function() {
+    var nextPage = $('.bookmark:last').attr('data-next');
     $('#bookmarks .thumbnails a').each(function() {
       $(this).bind('click', function() {
+        $(this).find('span').remove();
         $('#bookmarks .bookmarks-table tbody').empty();
         $('#bookmarks .bookmarks-table tbody').loadFriendBookmarks(
           getFriendBookmarksUrl($(this).attr('data-item'))

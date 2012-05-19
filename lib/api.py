@@ -400,6 +400,8 @@ def get_bookmarked_movies(user_id, page):
             item__pk__in=my_bookmarks,
             item__bookmark__created_at__gte=last_checked,
             item__bookmark__user__in=friends)
+    print recent_bookmarks
+    print last_checked
     recent_item_ids = recent_bookmarks.values_list('item', flat=True)
     not_recent = list(set(my_bookmarks) - set(recent_item_ids))
     other_bookmarks = Movie.objects.filter(item__pk__in=not_recent) \
@@ -409,11 +411,19 @@ def get_bookmarked_movies(user_id, page):
             .order_by('-new_bookmarks')
     combined = QuerySetChain(annotated, other_bookmarks)
     paginator = Paginator(combined, 12)
+
+    try:
+        next_page = paginator.page(page).next_page_number()
+        paginator.page(next_page)
+    except (EmptyPage, InvalidPage):
+        next_page = ''
+
     response = [{
         'item_id': movie['item_id'],
         'url': movie['url'],
         'image_url': get_thumbnail(movie['image'], 'x285').url,
-        'new_bookmarks': movie.get('new_bookmarks', 0)
+        'new_bookmarks': movie.get('new_bookmarks', 0),
+        'next': next_page
     } for movie in paginator.page(page)]
 
     return simplejson.dumps(response)

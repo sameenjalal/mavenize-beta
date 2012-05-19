@@ -3,9 +3,12 @@
   var bookmarkTemplate = _.template("\
     <% for (var i = 0; i < movies.length; i++) { %>\
       <% var movie = movies[i]; %>\
-      <li class='span2'>\
+      <li class='span2' data-next='<% movie.next %>'>\
         <a class='thumbnail bookmark' data-item='<%= movie.item_id %>'>\
           <img src='<%= movie.image_url %>' />\
+          <% if (movie.new_bookmarks >= 1) { %>\
+            <span class='badge badge-info bookmarks-count'><%= movie.new_bookmarks %></span>\
+          <% } %>\
         </a>\
       </li>\
     <% } %>\

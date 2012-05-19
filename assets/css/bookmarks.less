@@ -12,6 +12,7 @@
     background: @contrastFill;
     height: 192px;
     padding: 5px;
+    position: relative;
 
     .Border();
     .RoundedCorners(0);
@@ -24,6 +25,12 @@
   .bookmark:hover {
     border-color: @linkColor;
   }
+
+  .bookmarks-count {
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
 }
 
 .bookmarks-table {
