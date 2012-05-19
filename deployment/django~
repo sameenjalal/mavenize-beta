@@ -23,3 +23,19 @@ sudo sh -c "iptables-save > /etc/iptables.rules"
 
 # Install PostgreSQL Client
 sudo aptitude install postgresql-client
+
+# Configure Environment Variable for Django
+sudo sh -c 'echo "DEPLOYMENT_TYPE=production" >> /etc/environment'
+
+# Install Git
+sudo aptitude install git-core
+
+# Setup SSH Key
+ssh-keygen -t rsa -C "YOUREMAIL@DOMAIN.COM"
+# Add to Github SSH Keys
+git config --global user.name "YOURNAME"
+git config --global user.email "YOUREMAIL@DOMAIN.COM"
+
+# Setup Virtual Environment
+virtualenv env
+git clone 
