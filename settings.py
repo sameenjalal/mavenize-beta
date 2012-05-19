@@ -357,7 +357,6 @@ else:
 # Middleware
 
 middleware_list = [
-    'commonware.log.ThreadRequestMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'announce.middleware.AnnounceCookieMiddleware',
