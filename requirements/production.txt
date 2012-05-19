@@ -2,3 +2,4 @@ django-cumulus==1.0.5
 django-redis-sessions==0.2.3
 django-sendgrid==0.4.3
 nexus-redis==0.3
+pysolr==2.1.0-beta
