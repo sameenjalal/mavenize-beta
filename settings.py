@@ -68,7 +68,6 @@ if is_solo() or is_dev():
             'LOCATION': '127.0.0.1:6379',
             'OPTIONS': {
                 'DB': 1,
-                'PASSWORD': '&Hunt3RK!ll3r$',
                 'PARSER_CLASS': 'redis.connection.HiredisParser'
             }
         }
@@ -80,11 +79,20 @@ else:
             'BACKEND': 'redis_cache.cache.RedisCache',
             'LOCATION': '209.61.142.151:6379',
             'OPTIONS': {
+                'DB': 0,
+                'PASSWORD': '&Hunt3RK!ll3r$',
+                'PARSER_CLASS': 'redis.connection.HiredisParser'
+            }
+        },
+         'notifications': {
+            'BACKEND': 'redis_cache.cache.RedisCache',
+            'LOCATION': '209.61.142.151:6379',
+            'OPTIONS': {
                 'DB': 1,
                 'PASSWORD': '&Hunt3RK!ll3r$',
                 'PARSER_CLASS': 'redis.connection.HiredisParser'
             }
-        }
+        },
     }
 
 # E-mail Server
