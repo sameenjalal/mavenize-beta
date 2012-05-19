@@ -320,7 +320,9 @@ LOGGING = {
     },
 }
 
+############################
 # Debug Toolbar
+############################
 
 DEBUG_TOOLBAR_CONFIG = {
     'INTERCEPT_REDIRECTS': False,
@@ -329,16 +331,28 @@ DEBUG_TOOLBAR_CONFIG = {
                       'bookmark.signals.state_changed']
 }
 
+############################
 # Application Settings
+############################
 
 SECRET_KEY = '8^q6o4zyxy%p!ltd^#t)hqmb_))e5zy^nxg151f7tf)y_@%!9-'
 
 LOGIN_URL = '/login'
 LOGIN_REDIRECT_URL = '/'
 
+############################
 # Sessions
+############################
 
-SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+if is_solo() or is_dev():
+    SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+else:
+    SESSION_ENGINE = 'redis_sessions.session'
+    SESSION_REDIS_HOST = '209.61.142.151'
+    SESSION_REDIS_PORT = 6379
+    SESSION_REDIS_DB = 2
+    SESSION_REDIS_PASSWORD = '&Hunt3RK!ll3r$'
+    SESSION_REDIS_PREFIX = 'session'
 
 # Middleware
 
