@@ -1,2 +1,1 @@
-psycopg2==2.4.4
-pylibmc==1.2.2
+django-sendgrid==0.4.3
