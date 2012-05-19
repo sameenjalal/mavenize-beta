@@ -536,6 +536,11 @@ if is_solo() or is_dev():
     HAYSTACK_CONNECTIONS['default'] = {
         'ENGINE': 'haystack.backends.simple_backend.SimpleEngine',
     }
+else:
+    HAYSTACK_CONNECTIONS['default'] = {
+        'ENGINE': 'haystack.backends.solr_backend.SolrEngine',
+        'URL': '198.101.195.82:8983/solr',
+    }
 
 ############################
 # Announce
