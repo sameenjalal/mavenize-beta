@@ -179,8 +179,8 @@ STATICFILES_FINDERS = (
 if is_prod():
     CUMULUS = {
         'USERNAME': 'mavenize',
-        'CUMULUS_API_KEY': '7d93ad331ce171acccca10068da233dc',
-        'CUMULUS_CONTAINER': 'media',
+        'API_KEY': '7d93ad331ce171acccca10068da233dc',
+        'CONTAINER': 'media',
         'STATIC_CONTAINER': 'static'
     }
     DEFAULT_FILE_STORAGE = 'cumulus.storage.CloudFilesStorage'
