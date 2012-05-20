@@ -31,7 +31,7 @@ def new_user(sender, user, response, details, **kwargs):
     Update user social graph using Facebook friends.
     """
     user.is_new = True
-    signalAPI.build_social_graph(user.id)
+    signalAPI.build_social_graph.delay(user.id)
     return False
 
 @receiver(post_save, sender=Backward)

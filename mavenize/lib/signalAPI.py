@@ -12,6 +12,7 @@ from social_graph.models import Forward, Backward
 
 from announce import AnnounceClient
 import cacheAPI
+from celery.task import task
 import facebook
 
 MODEL_APP_NAME = {
@@ -193,6 +194,7 @@ def queue_bookmark_notifications(user_id, item_id):
         announce_client.unregister_group(user, 'bookmarks')
 
 
+@task(ignore_result=True)
 def build_social_graph(user_id):
     """
     Uses the user's social graph on Facebook to generate following
