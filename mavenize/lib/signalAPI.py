@@ -1,7 +1,9 @@
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.files.base import ContentFile
 from django.db.models import get_model, F
+from django.template.defaultfilters import slugify
 
 from activity_feed.models import Activity
 from bookmark.models import Bookmark
@@ -9,11 +11,14 @@ from notification.models import Notification
 from leaderboard.models import KarmaAction
 from social_auth.models import UserSocialAuth
 from social_graph.models import Forward, Backward
+from user_profile.models import UserProfile, UserStatistics
 
 from announce import AnnounceClient
 import cacheAPI
 from celery.task import task
 import facebook
+import hashlib
+from urllib2 import urlopen, HTTPError
 
 MODEL_APP_NAME = {
     'user': 'auth',
@@ -193,6 +198,60 @@ def queue_bookmark_notifications(user_id, item_id):
     for user in to_notify:
         announce_client.unregister_group(user, 'bookmarks')
 
+
+def create_user_profile(user_id, facebook_id):
+    """
+    Creates the user profile and statistics for the user as well as  
+    the avatar and thumbnail.
+        user_id: the primary key of the user (integer)
+        facebook_id: the facebook id of the user (integer)
+    """
+    user = User.objects.get(pk=user_id)
+    profile, created = UserProfile.objects.get_or_create(user=user)
+    statistics, created = UserStatistics.objects.get_or_create(
+        user=user)
+    update_facebook_profile_picture.delay(user_id, facebook_id, created)
+
+
+@task(ignore_result=True)
+def update_facebook_profile_picture(user_id, facebook_id, is_created):
+    """
+    Saves the avatar and thumbnail of a Facebook user.
+        user_id: the primary key of the user (integer)
+        facebook_id: the facebook id of the user (integer)
+        is_created: True if the profile was created (boolean)
+    """
+    try:
+        profile = UserProfile.objects.get(user=user_id)
+        url = ("http://graph.facebook.com/%s/picture" %         
+            facebook_id)
+        avatar = urlopen(url+'?type=large', timeout=30).read()
+        thumbnail = urlopen(url, timeout=30).read()
+        if not created:
+            if (hashlib.sha1(profile.thumbnail.read()).digest()
+                    != hashlib.sha1(thumbnail).digest()):
+                profile.avatar.delete()
+                profile.thumbnail.delete()
+                profile.avatar.save(
+                    slugify(str(user.id)+'a')+'.jpg',
+                    ContentFile(avatar)
+                )
+                profile.thumbnail.save(
+                    slugify(str(user.id)+'t') + '.jpg',     
+                    ContentFile(thumbnail)
+                )
+        else:
+            profile.avatar.save(
+                slugify(str(user.id)+'a')+'.jpg',
+                ContentFile(avatar)
+            )
+            profile.thumbnail.save(
+                slugify(str(user.id)+'t') + '.jpg',     
+                ContentFile(thumbnail)
+            )
+    except HTTPError:
+        pass
+    
 
 @task(ignore_result=True)
 def build_social_graph(user_id):
