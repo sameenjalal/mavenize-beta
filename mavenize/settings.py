@@ -184,6 +184,7 @@ if is_prod():
         'STATIC_CONTAINER': 'static'
     }
     DEFAULT_FILE_STORAGE = 'cumulus.storage.CloudFilesStorage'
+    STATICFILES_STORAGE = 'cumulus.storage.CloudFilesStaticStorage'
 
 ############################
 # Version Information
