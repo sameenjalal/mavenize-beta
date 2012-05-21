@@ -56,6 +56,17 @@ def get_followers(user_id):
     return list(Backward.objects.filter(destination_id=user_id) \
                                 .values_list('source_id', flat=True))
 
+def get_mavens(user_id):
+    """
+    Returns a list of the top ranked users by karma for a given user.
+        user_id: primary key of the user (integer)
+    """
+    following = get_following(user_id)
+    return list(User.objects.exclude(pk__in=following) \
+                            .order_by('-userstatistics__karma') \
+                            .values_list('id', flat=True))
+
+
 def get_friends(user_id):
     """
     Returns a list of users who the follow the user AND ALSO the user
@@ -64,6 +75,7 @@ def get_friends(user_id):
     """
     return list(set(get_following(user_id)) &
                 set(get_followers(user_id)))
+
 
 def get_bookmarked_items(user_id):
     """

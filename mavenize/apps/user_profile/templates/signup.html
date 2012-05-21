@@ -9,19 +9,21 @@
   <div class="row">
     <div id="main" class="span12">
       <section id="title-header">
-        <h1 id="title">{{ request.user.get_full_name }}, welcome to Mavenize!</h1>
+        <h1 id="title">{{ request.user.first_name }}, welcome to Mavenize!</h1>
         <h4 class="sub-header">Just a few more things to get you started.</h4>
       </section>
       <section id="mavens-container">
+        <ul class="users">
+        </ul>
       </section>
       <section id="about-form">
-        {% csrf_token %}
         <form action="/signup/complete" method="POST">
+        {% csrf_token %}
           <fieldset>
           <div class="control-group">
-            <label class="control-label" for="about-text">About You</label>
+            <label id="about-label" class="control-label" for="about-text">Last but not least, tell us a little about yourself!</label>
             <div class="controls">
-              <textarea id="about-text" placeholder="Share a little about yourself!" rows="1" name="text"></textarea>
+              <textarea id="about-text" placeholder="Ex: Skydiver enthusiast, mountaineer, and catlover." rows="1" name="text"></textarea>
               <button class="btn btn-larg btn-primary" id="about-submit" type="submit">Finish Up!</button>
             </div>
           </div>

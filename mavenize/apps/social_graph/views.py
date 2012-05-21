@@ -4,6 +4,14 @@ from django.contrib.auth.decorators import login_required
 import api
 
 @login_required
+def mavens(request, page):
+    me = request.session['_auth_user_id']
+    mavens = api.get_mavens(me)
+
+    return HttpResponse(api.get_user_boxes(me, mavens, page),
+        mimetype="application/json")
+
+@login_required
 def follow(request, user_id):
     if request.method == 'POST' and request.is_ajax():
         try:

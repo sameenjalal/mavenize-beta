@@ -258,7 +258,7 @@ CELERY_REDIS_PORT = "6379"
 CELERY_REDIS_DB = 4
 CELERY_REDIS_PASSWORD = "&Hunt3RK!ll3r$"
 
-CELERY_ALWAYS_EAGER = is_solo()
+CELERY_ALWAYS_EAGER = is_solo() or is_dev()
 CELERY_EAGER_PROPAGATES_EXCEPTIONS = True
 
 ############################

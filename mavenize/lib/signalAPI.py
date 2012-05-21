@@ -222,31 +222,31 @@ def update_facebook_profile_picture(user_id, facebook_id, is_created):
         is_created: True if the profile was created (boolean)
     """
     try:
-        profile = UserProfile.objects.get(user=user_id)
+        profile = UserProfile.objects.get(pk=user_id)
         url = ("http://graph.facebook.com/%s/picture" %         
             facebook_id)
         avatar = urlopen(url+'?type=large', timeout=30).read()
         thumbnail = urlopen(url, timeout=30).read()
-        if not created:
+        if not is_created and profile.thumbnail:
             if (hashlib.sha1(profile.thumbnail.read()).digest()
                     != hashlib.sha1(thumbnail).digest()):
                 profile.avatar.delete()
                 profile.thumbnail.delete()
                 profile.avatar.save(
-                    slugify(str(user.id)+'a')+'.jpg',
+                    slugify(str(user_id)+'a')+'.jpg',
                     ContentFile(avatar)
                 )
                 profile.thumbnail.save(
-                    slugify(str(user.id)+'t') + '.jpg',     
+                    slugify(str(user_id)+'t') + '.jpg',     
                     ContentFile(thumbnail)
                 )
         else:
             profile.avatar.save(
-                slugify(str(user.id)+'a')+'.jpg',
+                slugify(str(user_id)+'a')+'.jpg',
                 ContentFile(avatar)
             )
             profile.thumbnail.save(
-                slugify(str(user.id)+'t') + '.jpg',     
+                slugify(str(user_id)+'t') + '.jpg',     
                 ContentFile(thumbnail)
             )
     except HTTPError:
