@@ -96,7 +96,7 @@
         {% endthumbnail %}
       </div>
       <div id="user-interaction">
-        <button class="btn btn-large btn-sidebar {%if has_bookmarked %}btn-warning{% else %}btn-success{% endif %} btn-bookmark" value="{{ movie.pk }}">{% if has_bookmarked %}Remove from Scrapbook{% else %}Add to Scrapbook{% endif %}</button>
+        <button class="btn btn-large btn-sidebar {%if has_bookmarked %}btn-warning{% else %}btn-success{% endif %} btn-bookmark" value="{{ movie.pk }}">{% if has_bookmarked %}Remove It{% else %}Add to Scrapbook{% endif %}</button>
       </div>
       <div id="chart-wrapper" class="module-container border">
         <div id="rating-chart">
@@ -171,14 +171,14 @@
       });
       $('.btn-bookmark').click(function() {
           var button = $(this);
-          if ($.trim(button.text()) == 'Mark It') {
+          if ($.trim(button.text()) == 'Add to Scrapbook') {
             $.ajax({
               type: 'POST',
               url: '/bookmark/' + button.val() + '/',
               data: { csrfmiddlewaretoken: CSRF_TOKEN },
               success: function() {
                 button.toggleClass('btn-warning').toggleClass('btn-success');
-                button.text('Unmark');
+                button.text('Remove It');
               }
             });
           }
@@ -189,7 +189,7 @@
               data: { csrfmiddlewaretoken: CSRF_TOKEN },
               success: function() {
                 button.toggleClass('btn-warning').toggleClass('btn-success');
-                button.text('Mark It');
+                button.text('Add to Scrapbook');
               }
             });
           }

@@ -15,7 +15,7 @@
             <img src='<%= activity.target_image %>' />\
           </a>\
           <% if (activity.bookmarked) { %>\
-            <button class='btn btn-warning btn-bookmark' value='<%= activity.item_id %>'>Remove from Scrapbook</button>\
+            <button class='btn btn-warning btn-bookmark' value='<%= activity.item_id %>'>Remove It</button>\
           <% } else { %>\
             <button class='btn btn-success btn-bookmark' value='<%= activity.item_id %>'>Add to Scrapbook</button>\
           <% } %>\
@@ -60,14 +60,14 @@
       listSelector.bind('appended', function() {
         $('.btn-bookmark').click(function() {
           var button = $(this);
-          if (button.text() == 'Mark It') {
+          if ($.trim(button.text()) == 'Add to Scrapbook') {
             $.ajax({
               type: 'POST',
               url: '/bookmark/' + button.val() + '/',
               data: { csrfmiddlewaretoken: CSRF_TOKEN },
               success: function() {
                 button.toggleClass('btn-warning').toggleClass('btn-success');
-                button.text('Unmark');
+                button.text('Remove It');
               }
             });
           }
@@ -78,7 +78,7 @@
               data: { csrfmiddlewaretoken: CSRF_TOKEN },
               success: function() {
                 button.toggleClass('btn-warning').toggleClass('btn-success');
-                button.text('Mark It');
+                button.text('Add to Scrapbook');
               }
             });
           }

@@ -36,7 +36,6 @@ $(document).ready(function() {
   // SocketIO Listeners
   announce.on('notification', function(data) {
     var currentCount = parseInt($('#notifications-count').text());
-    alert(currentCount);
     $('#notifications-count').text((currentCount + data.new).toString());
   });
 
