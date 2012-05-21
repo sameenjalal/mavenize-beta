@@ -15,9 +15,9 @@
             <img src='<%= activity.target_image %>' />\
           </a>\
           <% if (activity.bookmarked) { %>\
-            <button class='btn btn-warning btn-bookmark' value='<%= activity.item_id %>'>Unmark</button>\
+            <button class='btn btn-warning btn-bookmark' value='<%= activity.item_id %>'>Remove from Scrapbook</button>\
           <% } else { %>\
-            <button class='btn btn-success btn-bookmark' value='<%= activity.item_id %>'>Mark It</button>\
+            <button class='btn btn-success btn-bookmark' value='<%= activity.item_id %>'>Add to Scrapbook</button>\
           <% } %>\
         </div>\
         <div class='review-context'>\

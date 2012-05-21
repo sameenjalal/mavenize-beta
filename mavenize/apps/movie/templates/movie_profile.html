@@ -96,7 +96,7 @@
         {% endthumbnail %}
       </div>
       <div id="user-interaction">
-        <button class="btn btn-large btn-sidebar {%if has_bookmarked %}btn-warning{% else %}btn-success{% endif %} btn-bookmark" value="{{ movie.pk }}">{% if has_bookmarked %}Unmark{% else %}Mark It{% endif %}</button>
+        <button class="btn btn-large btn-sidebar {%if has_bookmarked %}btn-warning{% else %}btn-success{% endif %} btn-bookmark" value="{{ movie.pk }}">{% if has_bookmarked %}Remove from Scrapbook{% else %}Add to Scrapbook{% endif %}</button>
       </div>
       <div id="chart-wrapper" class="module-container border">
         <div id="rating-chart">

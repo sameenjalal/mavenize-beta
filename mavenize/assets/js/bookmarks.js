@@ -3,7 +3,7 @@ $(document).ready(function() {
   var modalTemplate = _.template("\
     <div class='modal-header'>\
       <a class='close' data-dismiss='modal'>×</a>\
-      <h3>The Latest on Your Bookmarks</h3>\
+      <h3>The Latest on Your Scrapbook</h3>\
     </div>\
     <div class='modal-body'>\
       <div class='container bookmark-container'>\
