@@ -46,11 +46,11 @@ class Movie(models.Model):
     title = models.CharField(max_length=60)
     mpaa_rating = models.CharField(max_length=5)
     runtime = models.SmallIntegerField()
-    critic_score = models.SmallIntegerField()
+    #critic_score = models.SmallIntegerField()
     genre = models.ManyToManyField(Genre)
     synopsis = models.TextField()
     theater_date = models.DateField(null=True)
-    dvd_date = models.DateField(null=True)
+    #dvd_date = models.DateField(null=True)
     image = models.ImageField(
         upload_to='img/movies',
         default='img/movies/default.jpg'

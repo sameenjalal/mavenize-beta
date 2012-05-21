@@ -13,8 +13,8 @@ class LoadMovie():
     """
     exists = False
     
-    def __init__(self, title, mpaa_rating, runtime, critic_score,
-                 synopsis, theater_date, dvd_date):
+    def __init__(self, title, mpaa_rating, runtime,
+                 synopsis, theater_date):
         """
         Inserts the movie into the database if it doesn't already
         exist in the database.
@@ -23,10 +23,8 @@ class LoadMovie():
             title=title,
             mpaa_rating=mpaa_rating,
             runtime=runtime,
-            critic_score=critic_score,
             synopsis=synopsis,
             theater_date=theater_date,
-            dvd_date=dvd_date,
             url=slugify(title)
         )
 
