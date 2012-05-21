@@ -17,7 +17,6 @@ from notification.models import Notification
 from review.models import Review, Agree, Thank, ReviewForm, ThankForm
 from social_graph.models import Forward, Backward
 from user_profile.models import UserProfile, UserStatistics
-
 from sorl.thumbnail import get_thumbnail
 from utils import QuerySetChain
 import datetime as dt
@@ -466,6 +465,14 @@ def follow(source_id, destination_id):
     Backward.objects.get_or_create(destination_id=destination_id,
                                    source_id=source_id)
 
+def about_me(user_id, text):
+    """
+    Fills in the about me section of the user profile for a given user.
+        user_id: primary key of the user (integer)
+        text: text of the about me section (string)
+    """
+    UserProfile.objects.filter(pk=user_id).update(about_me=text)
+    
 
 def bookmark(user_id, item_id):
     """

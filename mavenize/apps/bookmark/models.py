@@ -38,18 +38,18 @@ def create_bookmark(sender, instance, created, **kwargs):
     Increment the user and item's bookmarks by one.
     """
     if created:
-	import signalAPI
-        signalAPI.update_statistics(
+        from signalAPI import update_statistics, queue_bookmark_notifications
+        update_statistics(
             model_name="userstatistics",
             obj_id=instance.user_id,
             bookmarks=1
         )
-        signalAPI.update_statistics(
+        update_statistics(
             model_name="item",
             obj_id=instance.item_id,
             bookmarks=1
         )
-        signalAPI.queue_bookmark_notifications(
+        queue_bookmark_notifications(
             user_id=instance.user_id,
             item_id=instance.item_id
         )
@@ -60,13 +60,13 @@ def delete_bookmark(sender, instance, **kwargs):
     """
     Undo the updates of the bookmark.
     """
-    import signalAPI
-    signalAPI.update_statistics(
+    from signalAPI import update_statistics
+    update_statistics(
         model_name="userstatistics",
         obj_id=instance.user_id,
         bookmarks=-1
     )
-    signalAPI.update_statistics(
+    update_statistics(
         model_name="item",
         obj_id=instance.item_id,
         bookmarks=-1

@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django import forms
 
 from social_auth.signals import pre_update
 from social_auth.backends.facebook import FacebookBackend
@@ -10,6 +11,9 @@ from social_auth.models import UserSocialAuth
 
 import facebook
 
+"""
+Models
+"""
 class UserProfile(models.Model):
     user = models.OneToOneField(User, primary_key=True)
     avatar = models.ImageField(
@@ -62,50 +66,14 @@ class KarmaUser(User):
                 raise ObjectDoesNotExist 
         return self._statistics_cache
 
+"""
+Signals
+"""
 @receiver(pre_update, sender=FacebookBackend)
 def update_user_profile(sender, user, response, details, **kwargs):
-    profile, created = UserProfile.objects.get_or_create(user=user)
-    statistics, created = UserStatistics.objects.get_or_create(
-        user=user)
-
-    if "id" in response:
-        from urllib2 import urlopen, HTTPError
-        from django.template.defaultfilters import slugify
-        from django.core.files.base import ContentFile
-        import hashlib
-
-        try:
-            url = ("http://graph.facebook.com/%s/picture" %         
-                response["id"])
-            avatar = urlopen(url+'?type=large', timeout=30).read()
-            thumbnail = urlopen(url, timeout=30).read()
-            if not created:
-                if (hashlib.sha1(profile.thumbnail.read()).digest()
-                        != hashlib.sha1(thumbnail).digest()):
-                    profile.avatar.delete()
-                    profile.thumbnail.delete()
-                    profile.avatar.save(
-                        slugify(str(user.id)+'a')+'.jpg',
-                        ContentFile(avatar)
-                    )
-                    profile.thumbnail.save(
-                        slugify(str(user.id)+'t') + '.jpg',     
-                        ContentFile(thumbnail)
-                    )
-            else:
-                profile.avatar.save(
-                    slugify(str(user.id)+'a')+'.jpg',
-                    ContentFile(avatar)
-                )
-                profile.thumbnail.save(
-                    slugify(str(user.id)+'t') + '.jpg',     
-                    ContentFile(thumbnail)
-                )
-        except HTTPError:
-            pass
-    
-    return True
-
+    from signalAPI import create_user_profile
+    create_user_profile(user.id, response.get('id'))
+  
 @receiver(post_save, sender=KarmaUser)
 def create_karma_user(sender, instance, created, **kwargs):
     """

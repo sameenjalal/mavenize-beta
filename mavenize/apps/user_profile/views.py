@@ -6,6 +6,21 @@ from django.contrib.auth.decorators import login_required
 import api
 
 @login_required
+def signup(request):
+    return render_to_response("signup.html", {},
+        RequestContext(request))
+
+@login_required
+def complete_signup(request):
+    if request.method == 'POST':
+        api.about_me(
+            user_id=request.session['_auth_user_id'],
+            text=request.POST['text']
+        )
+
+    return redirect('index')
+
+@login_required
 def my_profile(request):
     me = request.session['_auth_user_id']
     context = {

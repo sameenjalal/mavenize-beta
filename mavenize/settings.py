@@ -340,9 +340,6 @@ DEBUG_TOOLBAR_CONFIG = {
 
 SECRET_KEY = '8^q6o4zyxy%p!ltd^#t)hqmb_))e5zy^nxg151f7tf)y_@%!9-'
 
-LOGIN_URL = '/login'
-LOGIN_REDIRECT_URL = '/'
-
 ############################
 # Sessions
 ############################
@@ -506,6 +503,9 @@ SOCIAL_AUTH_COMPLETE_URL_NAME  = 'socialauth_complete'
 SOCIAL_AUTH_ASSOCIATE_URL_NAME = 'socialauth_associate_complete'
 SOCIAL_AUTH_EXTRA_DATA = True
 SOCIAL_AUTH_EXPIRATION = 'expires'
+SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/signup'
+LOGIN_URL = '/login'
+LOGIN_REDIRECT_URL = '/'
 
 ############################
 # Facebook 
