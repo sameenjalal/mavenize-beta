@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django import forms
 
 from social_auth.signals import pre_update
 from social_auth.backends.facebook import FacebookBackend
@@ -10,6 +11,9 @@ from social_auth.models import UserSocialAuth
 
 import facebook
 
+"""
+Models
+"""
 class UserProfile(models.Model):
     user = models.OneToOneField(User, primary_key=True)
     avatar = models.ImageField(
@@ -62,6 +66,9 @@ class KarmaUser(User):
                 raise ObjectDoesNotExist 
         return self._statistics_cache
 
+"""
+Signals
+"""
 @receiver(pre_update, sender=FacebookBackend)
 def update_user_profile(sender, user, response, details, **kwargs):
     from signalAPI import create_user_profile

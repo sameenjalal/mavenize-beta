@@ -11,7 +11,7 @@ admin.autodiscover()
 nexus.autodiscover()
 
 urlpatterns = patterns('activity_feed.views',
-    url(r'^$', 'index'),
+    url(r'^$', 'index', name='index'),
 
     url(r'^feed/(?P<page>\d+)/$', 'activity'),
 )
@@ -22,6 +22,8 @@ urlpatterns += patterns('haystack.views',
 )
 
 urlpatterns += patterns('user_profile.views',
+    url(r'^signup/$', 'signup', name='signup'),
+    url(r'^signup/complete$', 'complete_signup'),
     url(r'^me/$', 'my_profile', name='my-profile'),
     url(r'^users/(?P<user_id>\d+)/$', 'profile', name='user-profile'),
 
