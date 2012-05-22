@@ -41,7 +41,7 @@ class Migration(SchemaMigration):
             ('runtime', self.gf('django.db.models.fields.SmallIntegerField')()),
             ('synopsis', self.gf('django.db.models.fields.TextField')()),
             ('theater_date', self.gf('django.db.models.fields.DateField')(null=True)),
-            ('image', self.gf('django.db.models.fields.files.ImageField')(default='img/movies/default.jpg', max_length=100)),
+            ('image', self.gf('django.db.models.fields.files.ImageField')(default='img/movies/default.jpg', max_length=255)),
             ('url', self.gf('django.db.models.fields.SlugField')(max_length=255, null=True)),
         ))
         db.send_create_signal('movie', ['Movie'])
@@ -129,7 +129,7 @@ class Migration(SchemaMigration):
             'actors': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['movie.Actor']", 'symmetrical': 'False'}),
             'directors': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['movie.Director']", 'symmetrical': 'False'}),
             'genre': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['movie.Genre']", 'symmetrical': 'False'}),
-            'image': ('django.db.models.fields.files.ImageField', [], {'default': "'img/movies/default.jpg'", 'max_length': '100'}),
+            'image': ('django.db.models.fields.files.ImageField', [], {'default': "'img/movies/default.jpg'", 'max_length': '255'}),
             'imdb_id': ('django.db.models.fields.IntegerField', [], {}),
             'item': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['item.Item']", 'unique': 'True', 'primary_key': 'True'}),
             'keywords': ('django.db.models.fields.TextField', [], {}),

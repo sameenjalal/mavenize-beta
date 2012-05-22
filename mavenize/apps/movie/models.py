@@ -51,7 +51,8 @@ class Movie(models.Model):
     theater_date = models.DateField(null=True)
     image = models.ImageField(
         upload_to='img/movies',
-        default='img/movies/default.jpg'
+        default='img/movies/default.jpg',
+        max_length=255
     )
     genre = models.ManyToManyField(Genre)
     directors = models.ManyToManyField(Director)
