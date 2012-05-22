@@ -11,7 +11,7 @@ class Migration(SchemaMigration):
         # Adding model 'Genre'
         db.create_table('movie_genre', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=120)),
+            ('name', self.gf('django.db.models.fields.CharField')(max_length=255)),
             ('url', self.gf('django.db.models.fields.SlugField')(max_length=50, null=True)),
         ))
         db.send_create_signal('movie', ['Genre'])
@@ -19,7 +19,7 @@ class Migration(SchemaMigration):
         # Adding model 'Actor'
         db.create_table('movie_actor', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=120)),
+            ('name', self.gf('django.db.models.fields.CharField')(max_length=255)),
             ('url', self.gf('django.db.models.fields.SlugField')(max_length=50, null=True)),
         ))
         db.send_create_signal('movie', ['Actor'])
@@ -27,7 +27,7 @@ class Migration(SchemaMigration):
         # Adding model 'Director'
         db.create_table('movie_director', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=120)),
+            ('name', self.gf('django.db.models.fields.CharField')(max_length=255)),
             ('url', self.gf('django.db.models.fields.SlugField')(max_length=50, null=True)),
         ))
         db.send_create_signal('movie', ['Director'])
@@ -36,7 +36,7 @@ class Migration(SchemaMigration):
         db.create_table('movie_movie', (
             ('item', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['item.Item'], unique=True, primary_key=True)),
             ('imdb_id', self.gf('django.db.models.fields.IntegerField')()),
-            ('title', self.gf('django.db.models.fields.CharField')(max_length=120)),
+            ('title', self.gf('django.db.models.fields.CharField')(max_length=255)),
             ('keywords', self.gf('django.db.models.fields.TextField')()),
             ('runtime', self.gf('django.db.models.fields.SmallIntegerField')()),
             ('synopsis', self.gf('django.db.models.fields.TextField')()),
@@ -109,19 +109,19 @@ class Migration(SchemaMigration):
         'movie.actor': {
             'Meta': {'object_name': 'Actor'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '120'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             'url': ('django.db.models.fields.SlugField', [], {'max_length': '50', 'null': 'True'})
         },
         'movie.director': {
             'Meta': {'object_name': 'Director'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '120'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             'url': ('django.db.models.fields.SlugField', [], {'max_length': '50', 'null': 'True'})
         },
         'movie.genre': {
             'Meta': {'object_name': 'Genre'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '120'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             'url': ('django.db.models.fields.SlugField', [], {'max_length': '50', 'null': 'True'})
         },
         'movie.movie': {
@@ -136,7 +136,7 @@ class Migration(SchemaMigration):
             'runtime': ('django.db.models.fields.SmallIntegerField', [], {}),
             'synopsis': ('django.db.models.fields.TextField', [], {}),
             'theater_date': ('django.db.models.fields.DateField', [], {'null': 'True'}),
-            'title': ('django.db.models.fields.CharField', [], {'max_length': '120'}),
+            'title': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             'url': ('django.db.models.fields.SlugField', [], {'max_length': '50', 'null': 'True'})
         }
     }
