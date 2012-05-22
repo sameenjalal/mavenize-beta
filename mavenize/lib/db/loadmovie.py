@@ -13,21 +13,20 @@ class LoadMovie():
     """
     exists = False
     
-    def __init__(self, title, runtime,
-                 synopsis, theater_date,keywords,
-                 imdb):
+    def __init__(self, title, imdb_id, runtime,
+                 synopsis, theater_date, keywords):
         """
         Inserts the movie into the database if it doesn't already
         exist in the database.
         """
         self.movie, self.created = Movie.objects.get_or_create(
             title=title,
+            imdb_id=imdb_id,
             runtime=runtime,
             synopsis=synopsis,
             theater_date=theater_date,
             keywords = keywords,
-            url=slugify(title),
-            imdb=imdb
+            url=slugify(title)
         )
 
     def insert_genres(self, genres):

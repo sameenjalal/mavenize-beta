@@ -176,12 +176,13 @@ def save_movie(movie):
             keywordstring = keywordstring + keyword + ','
         imdb = movie['imdb_id'][2:]
         instance = LoadMovie(
-            movie['names']['name'],
-            movie['runtime'],
-            movie['overview'],
-            movie['released'],
-            keywordstring,
-            int(imdb))
+            title=movie['names']['name'],
+            imdb_id=imdb,
+            runtime=movie['runtime'],
+            synopsis=movie['overview'],
+            theater_date=movie['released'],
+            keywords=keywordstring,
+        )
         print('Loaded default values')
         #Inserting via LoadMovie helper methods
         #Genres, Directors, Actors, and then Images
