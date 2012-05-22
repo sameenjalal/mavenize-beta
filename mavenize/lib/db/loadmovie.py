@@ -31,7 +31,7 @@ class LoadMovie():
                 url=slugify(title)
             )
         except IntegrityError:
-            print('TRANSACTION FAILED: Rolling back now...')
+            print('TRANSACTION FAILED ON MOVIE INSERT: Rolling back now...')
             transaction.rollback()
 
     def insert_genres(self, genres):
@@ -39,52 +39,73 @@ class LoadMovie():
         Inserts the genres for the movie.
         """
         genre_list = []
-        for g in genres:
-            genre, created = Genre.objects.get_or_create(
-                name=g, url=slugify(g))
-            genre_list.append(genre)
-        self.movie.genre.add(*genre_list)
+        try:
+            for g in genres:
+                genre, created = Genre.objects.get_or_create(
+                    name=g, url=slugify(g))
+                genre_list.append(genre)
+            self.movie.genre.add(*genre_list)
+        except IntegrityError:
+            print('TRANSACTION FAILED ON GENRE INSERT: Rolling back now...')
+            transaction.rollback()
 
     def insert_actors(self, actors):
         """
         Inserts the actors for the movie.
         """
         actor_list = []
-        for a in actors:
-            actor, created = Actor.objects.get_or_create(
-                name=a, url=slugify(a))
-            actor_list.append(actor)
-        self.movie.actors.add(*actor_list)
+        try:
+            for a in actors:
+                actor, created = Actor.objects.get_or_create(
+                    name=a, url=slugify(a))
+                actor_list.append(actor)
+            self.movie.actors.add(*actor_list)
+        except IntegrityError:
+            print('TRANSACTION FAILED ON ACTOR INSERT: Rolling back now...')
+            transaction.rollback()
+            
 
     def insert_directors(self, directors):
         """
         Inserts the directors for the movie.
         """
         director_list = []
-        for d in directors:
-            director, created = Director.objects.get_or_create(
-                name=d, url=slugify(d))
-            director_list.append(director)
-        self.movie.directors.add(*director_list)
+        try:
+            for d in directors:
+                director, created = Director.objects.get_or_create(
+                    name=d, url=slugify(d))
+                director_list.append(director)
+            self.movie.directors.add(*director_list)
+        except IntegrityError:
+            print('TRANSACTION FAILED ON DIRECTOR INSERT: Rolling back now...')
+            transaction.rollback()
 
     @retry(HTTPError)
     def insert_image(self, url):
         """
         Inserts the image for the movie.
         """
-        if 'default.jpg' in self.movie.image.url or self.created:
-            image = urlopen(url, timeout=15)
-            self.movie.image.save(
-                self.movie.url+u'.jpg',
-                ContentFile(image.read())
-            )
+        try:
+            if 'default.jpg' in self.movie.image.url or self.created:
+                image = urlopen(url, timeout=15)
+                self.movie.image.save(
+                    self.movie.url+u'.jpg',
+                    ContentFile(image.read())
+                )
+        except IntegrityError:
+            print('TRANSACTION FAILED ON IMAGE INSERT: Rolling back now...')
+            transaction.rollback()
 
     def insert_trailer(self, url):
         """
         Inserts the trailer as a link.
         """
-        Link.objects.get_or_create(
-            item=self.movie.item,
-            partner="YouTube",
-            url=url
-        )
+        try:
+            Link.objects.get_or_create(
+                item=self.movie.item,
+                partner="YouTube",
+                url=url
+            )
+        except IntegrityError:
+            print('TRANSACTION FAILED ON TRAILER INSERT: Rolling back now...')
+            transaction.rollback()
