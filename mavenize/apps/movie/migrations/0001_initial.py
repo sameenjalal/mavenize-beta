@@ -42,7 +42,7 @@ class Migration(SchemaMigration):
             ('synopsis', self.gf('django.db.models.fields.TextField')()),
             ('theater_date', self.gf('django.db.models.fields.DateField')(null=True)),
             ('image', self.gf('django.db.models.fields.files.ImageField')(default='img/movies/default.jpg', max_length=100)),
-            ('url', self.gf('django.db.models.fields.SlugField')(max_length=50, null=True)),
+            ('url', self.gf('django.db.models.fields.SlugField')(max_length=255, null=True)),
         ))
         db.send_create_signal('movie', ['Movie'])
 
@@ -137,7 +137,7 @@ class Migration(SchemaMigration):
             'synopsis': ('django.db.models.fields.TextField', [], {}),
             'theater_date': ('django.db.models.fields.DateField', [], {'null': 'True'}),
             'title': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
-            'url': ('django.db.models.fields.SlugField', [], {'max_length': '50', 'null': 'True'})
+            'url': ('django.db.models.fields.SlugField', [], {'max_length': '255', 'null': 'True'})
         }
     }
 

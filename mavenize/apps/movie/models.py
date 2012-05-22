@@ -56,7 +56,7 @@ class Movie(models.Model):
     genre = models.ManyToManyField(Genre)
     directors = models.ManyToManyField(Director)
     actors = models.ManyToManyField(Actor)
-    url = models.SlugField(null=True)
+    url = models.SlugField(null=True, max_length=255)
 
     def __unicode__(self):
         return self.title
