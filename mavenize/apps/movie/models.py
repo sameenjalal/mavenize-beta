@@ -43,17 +43,17 @@ class Director(models.Model):
 
 class Movie(models.Model):
     item = models.OneToOneField(Item, primary_key=True)
+    imdb_id = models.IntegerField()
     title = models.CharField(max_length=60)
     keywords = models.TextField()
     runtime = models.SmallIntegerField()
-    imdb = models.SmallIntegerField()
-    genre = models.ManyToManyField(Genre)
     synopsis = models.TextField()
     theater_date = models.DateField(null=True)
     image = models.ImageField(
         upload_to='img/movies',
         default='img/movies/default.jpg'
     )
+    genre = models.ManyToManyField(Genre)
     directors = models.ManyToManyField(Director)
     actors = models.ManyToManyField(Actor)
     url = models.SlugField(null=True)

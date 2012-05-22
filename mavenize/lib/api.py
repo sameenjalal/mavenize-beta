@@ -425,17 +425,19 @@ def get_bookmarked_movies(user_id, page):
     combined = QuerySetChain(annotated, other_bookmarks)
     paginator = Paginator(combined, 12)
 
-    try:
-        next_page = paginator.page(page).next_page_number()
-        paginator.page(next_page)
-    except (EmptyPage, InvalidPage):
-        next_page = ''
+    previous_page, next_page = "", ""
+    current_page = paginator.page(page)
+    if current_page.has_previous():
+        previous_page = current_page.previous_page_number()
+    if current_page.has_next():
+        next_page = current_page.next_page_number()
 
     response = [{
         'item_id': movie['item_id'],
         'url': movie['url'],
         'image_url': get_thumbnail(movie['image'], 'x285').url,
         'new_bookmarks': movie.get('new_bookmarks', 0),
+        'previous': previous_page,
         'next': next_page
     } for movie in paginator.page(page)]
 
