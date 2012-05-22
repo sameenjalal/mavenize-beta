@@ -199,21 +199,33 @@ def save_movie(movie):
         instance.insert_actors(actors)
         instance.insert_directors(directors)
         print('Loaded actors & Directors')
-        #insert_image only takes one image at a time, so traverse movie['pictures']
-        foundMid = False
-        tempLargeImg = {}
-        for image in movie['pictures']:
-            if image['size']=='mid':
-                instance.insert_image(image['url'])
-                foundMid = True
-            elif image['size']=='original':
-                tempLargeImg = image
-        if foundMid == False:
-            instance.insert_image(tempLargeImg['url'])
-        print('Loaded image')
-        if movie['trailer'].find('youtube') != -1:
-            instance.insert_trailer(movie['trailer'])
 
+
+        #insert_image only takes one image at a time, so traverse movie['pictures']
+        if len(movie['pictures']) != 0:
+            foundMid = False
+            tempLargeImg = {}
+            for image in movie['pictures']:
+                if image['size']=='mid':
+                    instance.insert_image(image['url'])
+                    foundMid = True
+                elif image['size']=='original':
+                    tempLargeImg = image
+            if foundMid == False:
+                instance.insert_image(tempLargeImg['url'])
+            print('Loaded image')
+        else:
+            print('No pictures.')
+
+        print(movie['trailer'])
+        if type(movie['trailer']) != type(None):
+            if movie['trailer'].find('youtube') != -1:
+                instance.insert_trailer(movie['trailer'])
+                print('Successfully inserted trailer.')
+            else:
+                print('Not a YouTube link, did not insert.')
+        else:
+            print('No trailer link available.')
     except Exception, e:
         print e
         
