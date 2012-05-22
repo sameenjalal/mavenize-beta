@@ -7,7 +7,7 @@ from django.dispatch import receiver
 
 class Genre(models.Model):
     name = models.CharField(max_length=255)
-    url = models.SlugField(null=True)
+    url = models.SlugField(null=True, max_length=255)
 
     def __unicode__(self):
         return self.name
@@ -19,7 +19,7 @@ class Genre(models.Model):
 
 class Actor(models.Model):
     name = models.CharField(max_length=255)
-    url = models.SlugField(null=True)
+    url = models.SlugField(null=True, max_length=255)
     
     def __unicode__(self):
         return self.name
@@ -31,7 +31,7 @@ class Actor(models.Model):
 
 class Director(models.Model):
     name = models.CharField(max_length=255)
-    url = models.SlugField(null=True)
+    url = models.SlugField(null=True, max_length=255)
 
     def __unicode__(self):
         return self.name

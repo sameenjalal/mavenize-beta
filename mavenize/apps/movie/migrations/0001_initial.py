@@ -12,7 +12,7 @@ class Migration(SchemaMigration):
         db.create_table('movie_genre', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('name', self.gf('django.db.models.fields.CharField')(max_length=255)),
-            ('url', self.gf('django.db.models.fields.SlugField')(max_length=50, null=True)),
+            ('url', self.gf('django.db.models.fields.SlugField')(max_length=255, null=True)),
         ))
         db.send_create_signal('movie', ['Genre'])
 
@@ -20,7 +20,7 @@ class Migration(SchemaMigration):
         db.create_table('movie_actor', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('name', self.gf('django.db.models.fields.CharField')(max_length=255)),
-            ('url', self.gf('django.db.models.fields.SlugField')(max_length=50, null=True)),
+            ('url', self.gf('django.db.models.fields.SlugField')(max_length=255, null=True)),
         ))
         db.send_create_signal('movie', ['Actor'])
 
@@ -28,7 +28,7 @@ class Migration(SchemaMigration):
         db.create_table('movie_director', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('name', self.gf('django.db.models.fields.CharField')(max_length=255)),
-            ('url', self.gf('django.db.models.fields.SlugField')(max_length=50, null=True)),
+            ('url', self.gf('django.db.models.fields.SlugField')(max_length=255, null=True)),
         ))
         db.send_create_signal('movie', ['Director'])
 
@@ -110,19 +110,19 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'Actor'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
-            'url': ('django.db.models.fields.SlugField', [], {'max_length': '50', 'null': 'True'})
+            'url': ('django.db.models.fields.SlugField', [], {'max_length': '255', 'null': 'True'})
         },
         'movie.director': {
             'Meta': {'object_name': 'Director'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
-            'url': ('django.db.models.fields.SlugField', [], {'max_length': '50', 'null': 'True'})
+            'url': ('django.db.models.fields.SlugField', [], {'max_length': '255', 'null': 'True'})
         },
         'movie.genre': {
             'Meta': {'object_name': 'Genre'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
-            'url': ('django.db.models.fields.SlugField', [], {'max_length': '50', 'null': 'True'})
+            'url': ('django.db.models.fields.SlugField', [], {'max_length': '255', 'null': 'True'})
         },
         'movie.movie': {
             'Meta': {'object_name': 'Movie'},
