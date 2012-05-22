@@ -13,26 +13,12 @@
         <h4 class="sub-header">Just a few more things to get you started.</h4>
       </section>
       <section id="mavens-container" class="module-container">
-        <h3 class="heading">Start by choosing mavens to follow!</h3>
+        <h3 class="heading">Find mavens you can trust.</h3>
         <ul class="users">
         </ul>
         <button class="btn btn-large btn-success" id="btn-previous">Previous</button>
         <button class="btn btn-large btn-success" id="btn-next">Next</button>
         <div style="clear: both;"></div>
-      </section>
-      <section id="about-form">
-        <form action="/signup/complete" method="POST">
-        {% csrf_token %}
-          <fieldset>
-          <div class="control-group">
-            <label id="about-label" class="control-label" for="about-text">Last but not least, tell us a little about yourself!</label>
-            <div class="controls">
-              <textarea id="about-text" placeholder="Ex: Skydiver enthusiast, mountaineer, and catlover." rows="1" name="text"></textarea>
-              <button class="btn btn-large btn-primary" id="about-submit" type="submit">Finish Up!</button>
-            </div>
-          </div>
-          </fieldset>
-        </form>
       </section>
     </div>
   </div>

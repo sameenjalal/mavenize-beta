@@ -3,9 +3,24 @@
 *********/
 
 #mavens-container {
-  background: @formFill;
-  margin: 10px 0;
-  .RoundedCorners(5px);
+  margin-top: 50px;
+  min-height: 568px;
+  position: relative;
+  .Border();
+
+  #btn-previous, #btn-next {
+    bottom: 10px;
+    position: absolute;
+    width: 120px;
+  }
+
+  #btn-previous {
+    left: 10px;
+  }
+
+  #btn-next {
+    right: 10px;
+  }
 }
 
 #about-form {
@@ -15,7 +30,7 @@
   .RoundedCorners(5px);
 
   #about-label {
-    font-size: 32px;
+    font-size: 24px;
     font-weight: bold;
     margin: 10px;
   }
@@ -23,12 +38,12 @@
   #about-text {
     margin: 10px;
     padding: 13px;
-    width: 70%;
+    width: 72%;
   }
 
   #about-submit {
-    font-size: 24px;
-    height: 60px;
+    font-size: 18px;
+    height: 46px;
     margin: 10px;
     width: 180px;
   }

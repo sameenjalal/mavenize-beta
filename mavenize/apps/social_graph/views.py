@@ -1,7 +1,14 @@
+from django.shortcuts import render_to_response
+from django.template import RequestContext
 from django.http import HttpResponse, Http404
 from django.contrib.auth.decorators import login_required
 
 import api
+
+@login_required
+def find_mavens(request):
+    return render_to_response("mavens.html", {},
+        RequestContext(request))
 
 @login_required
 def mavens(request, page):

@@ -62,7 +62,7 @@ def get_mavens(user_id):
         user_id: primary key of the user (integer)
     """
     following = get_following(user_id)
-    return list(User.objects.exclude(pk__in=following) \
+    return list(User.objects.exclude(pk__in=(following + [user_id])) \
                             .order_by('-userstatistics__karma') \
                             .values_list('id', flat=True))
 
@@ -262,16 +262,17 @@ def get_user_boxes(my_id, user_ids, page):
     my_following = get_following(my_id)
     profiles = UserProfile.objects.select_related('user') \
                                   .filter(pk__in=user_ids)
-    paginator = Paginator(profiles, 20)
+    paginator = Paginator(profiles, 12)
     current_page_user_ids = [profile.pk for profile in
         paginator.page(page)]
     are_following = list(set(my_following) & set(current_page_user_ids))
 
-    try:
-        next_page = paginator.page(page).next_page_number()
-        paginator.page(next_page)
-    except (EmptyPage, InvalidPage):
-        next_page = ''
+    previous_page, next_page = "", ""
+    current_page = paginator.page(page)
+    if current_page.has_previous():
+        previous_page = current_page.previous_page_number()
+    if current_page.has_next():
+        next_page = current_page.next_page_number()
     
     response = [{
         'id': profile.pk,
@@ -281,6 +282,7 @@ def get_user_boxes(my_id, user_ids, page):
             crop='center').url,
         'url': reverse('user-profile', args=[profile.pk]),
         'is_following': True if profile.pk in are_following else False,
+        'previous': previous_page,
         'next': next_page 
     } for profile in paginator.page(page)]
 

@@ -3,9 +3,11 @@
   var userTemplate = _.template("\
     <% for (var i = 0; i < users.length; i++) { %>\
       <% var user = users[i]; %>\
-      <li class='user-box' data-next='<%= user.next %>'>\
+      <li class='user-box span4' data-previous='<%= user.previous %>' data-next='<%= user.next %>'>\
         <div class='user-avatar pull-left'>\
+          <a href='<%= user.url %>'>\
           <img src='<%= user.image_url %>' width='100' height='100' />\
+          </a>\
         </div>\
         <div class='user-content'>\
           <p class='user-name'><a href='<%= user.url %>'><%= user.full_name %></a></p>\
@@ -21,39 +23,37 @@
 
     // Plugin
     $.fn.loadUsers = function(url) {
-      listSelector = $(this);
+      $listSelector = $(this);
       $.get(url, function(users) {
         var userBoxes = userTemplate({ users: users });
-        $(listSelector).append(userBoxes);
-        $(listSelector).trigger('appended');
+        $listSelector.append(userBoxes);
+        $listSelector.trigger('appended');
       });
 
-      listSelector.bind('appended', function() {
-        $('.btn-follow').click(function() {
-          var button = $(this);
-          if ($.trim(button.text()) == 'Follow') {
-            $.ajax({
-              type: 'POST',
-              url: '/follow/' + button.val() + '/',
-              data: { csrfmiddlewaretoken: CSRF_TOKEN },
-              success: function() {
-                button.toggleClass('btn-warning').toggleClass('btn-success');
-                button.text('Unfollow');
-              }
-            });
-          }
-          else {
-            $.ajax({
-              type: 'DELETE',
-              url: '/unfollow/' + button.val() +'/',
-              data: { csrfmiddlewaretoken: CSRF_TOKEN },
-              success: function() {
-                button.toggleClass('btn-warning').toggleClass('btn-success');
-                button.text('Follow');
-              }
-            });
-          }
-        });
+      $('.users').on('click', '.btn-follow', function() {
+        var button = $(this);
+        if ($.trim(button.text()) == 'Follow') {
+          $.ajax({
+            type: 'POST',
+            url: '/follow/' + button.val() + '/',
+            data: { csrfmiddlewaretoken: CSRF_TOKEN },
+            success: function() {
+              button.toggleClass('btn-warning').toggleClass('btn-success');
+              button.text('Unfollow');
+            }
+          });
+        }
+        else {
+          $.ajax({
+            type: 'DELETE',
+            url: '/unfollow/' + button.val() +'/',
+            data: { csrfmiddlewaretoken: CSRF_TOKEN },
+            success: function() {
+              button.toggleClass('btn-warning').toggleClass('btn-success');
+              button.text('Follow');
+            }
+          });
+        }
       });
     }
 }) (jQuery);

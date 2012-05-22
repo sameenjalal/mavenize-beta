@@ -53,6 +53,7 @@ urlpatterns += patterns('review.views',
 )
 
 urlpatterns += patterns('social_graph.views',
+    url(r'^mavens/$', 'find_mavens'),
     url(r'^mavens/(?P<page>\d+)/$', 'mavens'),
 
     url(r'^follow/(?P<user_id>\d+)/$', 'follow'),
