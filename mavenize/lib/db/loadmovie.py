@@ -1,6 +1,7 @@
 from urllib2 import urlopen, HTTPError
 from django.template.defaultfilters import slugify
 from django.core.files.base import ContentFile
+from django.db import transaction, IntegrityError
 
 from item.models import Item, Link
 from movie.models import Movie, Actor, Director, Genre
@@ -19,15 +20,19 @@ class LoadMovie():
         Inserts the movie into the database if it doesn't already
         exist in the database.
         """
-        self.movie, self.created = Movie.objects.get_or_create(
-            title=title,
-            imdb_id=imdb_id,
-            runtime=runtime,
-            synopsis=synopsis,
-            theater_date=theater_date,
-            keywords = keywords,
-            url=slugify(title)
-        )
+        try:
+            self.movie, self.created = Movie.objects.get_or_create(
+                title=title,
+                imdb_id=imdb_id,
+                runtime=runtime,
+                synopsis=synopsis,
+                theater_date=theater_date,
+                keywords = keywords,
+                url=slugify(title)
+            )
+        except IntegrityError:
+            print('TRANSACTION FAILED: Rolling back now...')
+            transaction.rollback()
 
     def insert_genres(self, genres):
         """
@@ -67,7 +72,7 @@ class LoadMovie():
         """
         Inserts the image for the movie.
         """
-        if 'default.jpg' in self.movie.image.url:
+        if 'default.jpg' in self.movie.image.url or self.created:
             image = urlopen(url, timeout=15)
             self.movie.image.save(
                 self.movie.url+u'.jpg',

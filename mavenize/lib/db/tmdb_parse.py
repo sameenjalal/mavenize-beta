@@ -183,11 +183,11 @@ def save_movie(movie):
             theater_date=movie['released'],
             keywords=keywordstring,
         )
-        print('Loaded default values')
+        print('...loaded movie')
         #Inserting via LoadMovie helper methods
         #Genres, Directors, Actors, and then Images
         instance.insert_genres(movie['genres'])
-        print('Loaded genres')
+        print('...loaded genres')
         #Sort into two arrays of actors and directors
         actors = []
         directors = []
@@ -199,7 +199,7 @@ def save_movie(movie):
         #Call methods to add actors and directors
         instance.insert_actors(actors)
         instance.insert_directors(directors)
-        print('Loaded actors & Directors')
+        print('...loaded actors & directors')
 
 
         #insert_image only takes one image at a time, so traverse movie['pictures']
@@ -214,25 +214,24 @@ def save_movie(movie):
                     tempLargeImg = image
             if foundMid == False:
                 instance.insert_image(tempLargeImg['url'])
-            print('Loaded image')
+            print('...loaded image')
         else:
-            print('No pictures.')
+            print('...no pictures')
 
         print(movie['trailer'])
         if type(movie['trailer']) != type(None):
             if movie['trailer'].find('youtube') != -1:
                 instance.insert_trailer(movie['trailer'])
-                print('Successfully inserted trailer.')
+                print('...loaded trailer')
             else:
                 print('Not a YouTube link, did not insert.')
         else:
             print('No trailer link available.')
+        print('Sucessfully loaded movie ' + movie['names']['name'])
     except Exception, e:
         print e
         
-        
     # print movie.keys()
-    print('Sucessfully loaded movie ' + movie['names']['name'])
 
     #create an instance of each movie using LoadMovie(...)
     #print movie.values()
