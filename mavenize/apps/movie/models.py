@@ -6,7 +6,7 @@ from django.db.models.signals import post_delete
 from django.dispatch import receiver
 
 class Genre(models.Model):
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=120)
     url = models.SlugField(null=True)
 
     def __unicode__(self):
@@ -18,7 +18,7 @@ class Genre(models.Model):
         super(Genre, self).save(*args, **kwargs)
 
 class Actor(models.Model):
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=120)
     url = models.SlugField(null=True)
     
     def __unicode__(self):
@@ -30,7 +30,7 @@ class Actor(models.Model):
         super(Actor, self).save(*args, **kwargs)
 
 class Director(models.Model):
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=120)
     url = models.SlugField(null=True)
 
     def __unicode__(self):
@@ -44,7 +44,7 @@ class Director(models.Model):
 class Movie(models.Model):
     item = models.OneToOneField(Item, primary_key=True)
     imdb_id = models.IntegerField()
-    title = models.CharField(max_length=60)
+    title = models.CharField(max_length=120)
     keywords = models.TextField()
     runtime = models.SmallIntegerField()
     synopsis = models.TextField()

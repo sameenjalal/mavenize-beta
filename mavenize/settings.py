@@ -174,6 +174,7 @@ STATICFILES_DIRS = (path(ROOT, 'assets'),)
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'compressor.finders.CompressorFinder',
 )
 
 if is_prod():
@@ -447,6 +448,7 @@ apps_list = [
         'haystack',
         'announce',
         'djcelery',
+        'compressor',
 ]
 
 if is_solo() or is_dev():
