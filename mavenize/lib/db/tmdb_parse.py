@@ -171,12 +171,17 @@ def save_movie(movie):
     print('Adding movie '+ movie['names']['name'])
 
     try:
+        keywordstring = ''
+        for keyword in movie['keywords']:
+            keywordstring = keywordstring + keyword + ','
+        imdb = movie['imdb_id'][2:]
         instance = LoadMovie(
             movie['names']['name'],
-            movie['rating'],
             movie['runtime'],
             movie['overview'],
-            movie['released'])
+            movie['released'],
+            keywordstring,
+            int(imdb))
         print('Loaded default values')
         #Inserting via LoadMovie helper methods
         #Genres, Directors, Actors, and then Images
@@ -193,9 +198,22 @@ def save_movie(movie):
         #Call methods to add actors and directors
         instance.insert_actors(actors)
         instance.insert_directors(directors)
+        print('Loaded actors & Directors')
         #insert_image only takes one image at a time, so traverse movie['pictures']
+        foundMid = False
+        tempLargeImg = {}
         for image in movie['pictures']:
-            instance.insert_image(image['url'])
+            if image['size']=='mid':
+                instance.insert_image(image['url'])
+                foundMid = True
+            elif image['size']=='original':
+                tempLargeImg = image
+        if foundMid == False:
+            instance.insert_image(tempLargeImg['url'])
+        print('Loaded image')
+        if movie['trailer'].find('youtube') != -1:
+            instance.insert_trailer(movie['trailer'])
+
     except Exception, e:
         print e
         

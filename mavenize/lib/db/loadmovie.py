@@ -2,7 +2,7 @@ from urllib2 import urlopen, HTTPError
 from django.template.defaultfilters import slugify
 from django.core.files.base import ContentFile
 
-from item.models import Item
+from item.models import Item, Link
 from movie.models import Movie, Actor, Director, Genre
 from decorators.retry import retry
 
@@ -13,19 +13,21 @@ class LoadMovie():
     """
     exists = False
     
-    def __init__(self, title, mpaa_rating, runtime,
-                 synopsis, theater_date):
+    def __init__(self, title, runtime,
+                 synopsis, theater_date,keywords,
+                 imdb):
         """
         Inserts the movie into the database if it doesn't already
         exist in the database.
         """
         self.movie, self.created = Movie.objects.get_or_create(
             title=title,
-            mpaa_rating=mpaa_rating,
             runtime=runtime,
             synopsis=synopsis,
             theater_date=theater_date,
-            url=slugify(title)
+            keywords = keywords,
+            url=slugify(title),
+            imdb=imdb
         )
 
     def insert_genres(self, genres):
@@ -72,3 +74,13 @@ class LoadMovie():
                 self.movie.url+u'.jpg',
                 ContentFile(image.read())
             )
+
+    def insert_trailer(self, url):
+        """
+        Inserts the trailer as a link.
+        """
+        Link.objects.get_or_create(
+            item=self.movie.item,
+            partner="YouTube",
+            url=url
+        )
