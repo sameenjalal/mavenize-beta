@@ -1,5 +1,5 @@
 # Install build-essential, git, and curl, and libssl-dev
-sudo aptitude install build-essential git-core curl libssl-dev
+sudo aptitude install build-essential git-core curl libssl-dev openssl-dev
 
 # Install Node Version Manager
 git clone git://github.com/creationix/nvm.git ~/nvm
