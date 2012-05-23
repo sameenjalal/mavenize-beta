@@ -191,7 +191,7 @@ if is_prod():
     DEFAULT_FILE_STORAGE = 'cumulus.storage.CloudFilesStorage'
     STATIC_URL = COMPRESS_URL = 'http://c352884.r84.cf1.rackcdn.com/'
     STATICFILES_STORAGE = COMPRESS_STORAGE = \
-        'mavenize.storage.CachedCloudFilesStorage'
+        'cumulus.storage.CloudFilesStaticStorage'
 
 ############################
 # Version Information
