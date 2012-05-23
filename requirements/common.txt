@@ -13,4 +13,5 @@ hiredis==0.1.1
 django-redis==2.0c3
 django-announce==0.1.4
 django-compressor==1.1.2
+versiontools==1.9.1
 -e git+https://github.com/toastdriven/django-haystack.git@master#egg=django-haystack

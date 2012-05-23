@@ -23,3 +23,4 @@ sudo sh -c "iptables-save > /etc/iptables.rules"
 sudo aptitude install python-pip
 sudo pip install pip --upgrade
 
+

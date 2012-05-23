@@ -154,11 +154,8 @@
 {% endblock %}
 
 {% block js %}
-  <script type="text/javascript">
-    var STATIC_URL = "{{ STATIC_URL }}";
-    var CSRF_FIELD = "{% csrf_token %}";
-    var CSRF_TOKEN = "{{ csrf_token }}";
-  </script>
+  {% load compress %}
+  {% compress js %}
   <script type="text/javascript">
     $(document).ready(function() {
       $('#review-text').elastic();
@@ -202,4 +199,5 @@
   <script type="text/javascript" src="{{ STATIC_URL }}js/ratingGraph.js"></script>
   <script type="text/javascript" src="{{ STATIC_URL }}js/vendor/jquery.elastic.min.js"></script>
   <script type="text/javascript" src="{{ STATIC_URL }}js/modals.js"></script>
+  {% endcompress %}
 {% endblock %}

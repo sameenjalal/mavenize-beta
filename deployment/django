@@ -54,3 +54,10 @@ pip install -r requirements/production.txt
 # Setup Supervisor
 gunicorn -c deployment/gunicorn.conf.py mavenize.wsgi:application
 
+# Install NVM, Node and Less
+git clone git://github.com/creationix/nvm.git ~/nvm
+echo . ~/nvm/nvm.sh >> .bashrc
+nvm install v0.6.18
+nvm alias default v0.6.18
+npm install less
+sudo ln -s ~/node_modules/less/bin/lessc ~/mavenize-beta/env/bin/lessc

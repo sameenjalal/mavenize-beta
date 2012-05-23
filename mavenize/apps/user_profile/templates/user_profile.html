@@ -101,12 +101,8 @@
 {% endblock %}
 
 {% block js %}
-  <script type="text/javascript">
-    var STATIC_URL = "{{ STATIC_URL }}";
-    var CSRF_FIELD = "{% csrf_token %}";
-    var CSRF_TOKEN = "{{ csrf_token }}"; 
-    var USER_ID = {{ user.id }};
-  </script>
+  {% load compress %}
+  {% compress js %}
   <script type="text/javascript">
     $(document).ready(function() {
       $('.btn-follow').click(function() {
@@ -148,4 +144,5 @@
   <script type="text/javascript" src="{{ STATIC_URL }}js/loadUsers.js"></script>
   <script type="text/javascript" src="{{ STATIC_URL }}js/modals.js"></script>
   <script type="text/javascript" src="{{ STATIC_URL }}js/ratingForm.js"></script>
+  {% endcompress %}
 {% endblock %}

@@ -1,4 +1,5 @@
 {% load announcetags %}
+{% load compress %}
 <!DOCTYPE html>
 
 <html lang="en">
@@ -8,10 +9,12 @@
 
   <title>{% block title %}{% endblock %}</title>
 
-  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Didact+Gothic:regular" type="text/css" />
-  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:400,700" type="text/css">
+  {% compress css %}
+  <link rel="stylesheet" href="{{ STATIC_URL }}css/vendor/didactGothic.css" type="text/css" />
+  <link rel="stylesheet" href="{{ STATIC_URL }}css/vendor/openSans.css" type="text/css">
   <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap.min.css" type="text/css" media="screen" />
-  <link rel="stylesheet/less" href="{{ STATIC_URL }}css/global.less" type="text/css" media="screen" />
+  <link rel="stylesheet" href="{{ STATIC_URL }}css/global.less" type="text/less" media="screen" />
+  {% endcompress %}
   <script type="text/javascript" src="{{ STATIC_URL }}js/vendor/google-analytics.js"></script>
 </head>
 <body>
@@ -34,6 +37,13 @@
     {% include "footer.html" %}
   </footer>
 
+  <script type="text/javascript">
+    var STATIC_URL = "{{ STATIC_URL }}";
+    var CSRF_FIELD = "{% csrf_token %}";
+    var CSRF_TOKEN = "{{ csrf_token }}";
+    var USER_ID = {% if user.id %}{{ user.id }}{% else %}''{% endif %};
+  </script>
+
   <script type="text/javascript" charset="utf-8">
     var is_ssl = ("https:" == document.location.protocol);
     var asset_host = is_ssl ? "https://d3rdqalhjaisuu.cloudfront.net/" : "http://d3rdqalhjaisuu.cloudfront.net/";
@@ -49,16 +59,19 @@
 
     var feedback_widget = new GSFN.feedback_widget(feedback_widget_options);
   </script>
-  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+
+  {% announce_js %}
+
+  {% compress js %}
+  <script type="text/javascript" src="{{ STATIC_URL }}js/vendor/jquery.min.js"></script>
   <script type="text/javascript" src="{{ STATIC_URL }}js/vendor/underscore.min.js"></script>
   <script type="text/javascript" src="{{ STATIC_URL }}js/vendor/bootstrap.min.js"></script>
   <script type="text/javascript" src="{{ STATIC_URL }}js/vendor/less.min.js"></script>
-  {% announce_js %}
   <script type="text/javascript" src="{{ STATIC_URL }}js/loadBookmarks.js"></script>
   <script type="text/javascript" src="{{ STATIC_URL }}js/notifications.js"></script>
   <script type="text/javascript" src="{{ STATIC_URL }}js/bookmarks.js"></script>
+  {% endcompress %}
 
   {% block js %}{% endblock %}
-
 </body>
 </html>

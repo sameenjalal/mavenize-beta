@@ -176,6 +176,10 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     'compressor.finders.CompressorFinder',
 )
+COMPRESS_ENABLED = True
+COMPRESS_PRECOMPILERS = (
+    ('text/less', 'lessc {infile} {outfile}'),
+)
 
 if is_prod():
     CUMULUS = {
@@ -185,7 +189,9 @@ if is_prod():
         'STATIC_CONTAINER': 'static'
     }
     DEFAULT_FILE_STORAGE = 'cumulus.storage.CloudFilesStorage'
-    STATICFILES_STORAGE = 'cumulus.storage.CloudFilesStaticStorage'
+    STATIC_URL = COMPRESS_URL = 'http://c352884.r84.cf1.rackcdn.com/'
+    STATICFILES_STORAGE = COMPRESS_STORAGE = \
+        'mavenize.storage.CachedCloudFilesStorage'
 
 ############################
 # Version Information

@@ -51,6 +51,8 @@
 {% endblock %}
 
 {% block js %}
+  {% load compress %}
+  {% compress js %}
   <script type="text/javascript">
     $(document).ready(function() {
       $('#filters li:first').addClass('active');
@@ -60,4 +62,5 @@
   <script type="text/javascript" src="{{ STATIC_URL }}js/slideNav.js"></script>
   <script type="text/javascript" src="{{ STATIC_URL }}js/exploreMovies.js"></script>
   <script type="text/javascript" src="{{ STATIC_URL }}js/loadMovies.js"></script>
+  {% endcompress %}
 {% endblock %}
