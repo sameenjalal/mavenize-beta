@@ -66,20 +66,21 @@ def getAuthors(movie,movieid):
 
 
 def downloadJSON(movie,directory,movieid):
-    print('Grabbing JSONs from ' + movie.title)
+    print('...Grabbing JSONs for ' + movie.title)
     title = movie.title
     imdb_id = movieid
     reviewSearchURL=BASE+'movies/'+str(imdb_id)+'/reviews.json?'
     reviewSearchURL = reviewSearchURL+urllib.urlencode({'apikey':KEY})
-    print('Search url is ' + reviewSearchURL)
+    #print('Search url is ' + reviewSearchURL)
     reviewData=json.loads(urllib2.urlopen(reviewSearchURL).read())
     reviewData = reviewData['reviews']
     if len(reviewData) > 0:
         with open(directory+'/'+str(movie.imdb_id),'wb') as fp:
             json.dump(reviewData,fp)
-        print('Dumped JSON of ' + movie.title)
+        print('...Successfully dumped  JSON of ' + movie.title)
     else:
-        print('No reviews available for movie ' + movie.title)
+        print('...No reviews available for movie ' + movie.title)
+        print('...Skipping write')
     #f = open(directory+'/'+str(imdb_id), 'w')
     #f.write(reviewData)
     #f.close()
@@ -92,9 +93,9 @@ def downloadJSONRange(directory,start,end):
         except Exception as err:
             print('Error creating dir')
             exit(2)
-    print('destination directory is ' + directory)
-    for movie in Movie.objects.order_by("-theater_date")[start,end]:
-
+    #print('destination directory is ' + directory)
+    for movie in Movie.objects.order_by("-theater_date")[start:end]:
+        print('Starting download of ' + movie.title)
         movieSearchURL=movieURL+'?'+urllib.urlencode({'apikey':KEY, 'q': movie.title})
         movieData = json.loads(urllib2.urlopen(movieSearchURL).read())
         movieData = movieData['movies']
@@ -104,32 +105,32 @@ def downloadJSONRange(directory,start,end):
         matchByYear = False
         for movietomatoe in movieData:
             try:
-                print('tomatoes id get '+ movietomatoe['alternate_ids']['imdb'])
-                print('database id get ' + str(movie.imdb_id))
+                #print('tomatoes id get '+ movietomatoe['alternate_ids']['imdb'])
+                #print('database id get ' + str(movie.imdb_id))
                 if int(movietomatoe['alternate_ids']['imdb']) == movie.imdb_id:
                     correctMovieID=movietomatoe['id']
                     break
             except KeyError:
-                print('No imdb found, match by year')
+                print('...No imdb found, match by year')
                 matchByYear = True
                 
         if matchByYear == True:
             for movietomatoe in movieData:
                 movieYear = defaultfilters.date(movie.theater_date,'Y')
-                print('tomatoes date get ' + str(movietomatoe['year']))
-                print('database date get ' + movieYear)
+                #print('tomatoes date get ' + str(movietomatoe['year']))
+                #print('database date get ' + movieYear)
                 if movietomatoe['year'] == int(movieYear):
                     correctMovieID = movietomatoe['id']
                     break
 
         if correctMovieID==-1:
             
-            print('skipping: Cannot find movie with that year ' + defaultfilters.date(movie.theater_date,'Y') + 'and name ' + movie.title)
-            print('ID is ' + str(correctMovieID))
+            print('...Skipping: Cannot find movie with that year ' + defaultfilters.date(movie.theater_date,'Y') + 'and name ' + movie.title)
+            print('...Skipping write.')
 
         elif correctMovieID != -1:
             downloadJSON(movie,directory,correctMovieID)
-            print('Downloaded movie '+ movie.title)
+            print('...Finished processing movie '+ movie.title)
 
 
 
