@@ -83,8 +83,8 @@ def downloadJSON(movie,directory,movieid):
     #f = open(directory+'/'+str(imdb_id), 'w')
     #f.write(reviewData)
     #f.close()
-
-def downloadAllJSON(directory):
+#Indexes 0 to # movies - 1
+def downloadJSONRange(directory,start,end):
     if os.path.exists(directory) == False:
         try:
             os.mkdir(directory)
@@ -93,7 +93,7 @@ def downloadAllJSON(directory):
             print('Error creating dir')
             exit(2)
     print('destination directory is ' + directory)
-    for movie in Movie.objects.order_by("-theater_date"):
+    for movie in Movie.objects.order_by("-theater_date")[start,end]:
 
         movieSearchURL=movieURL+'?'+urllib.urlencode({'apikey':KEY, 'q': movie.title})
         movieData = json.loads(urllib2.urlopen(movieSearchURL).read())
