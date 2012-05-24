@@ -1,8 +1,9 @@
-# Install PIP and Virtualenv
+# Install PIP, Fabric, and Virtualenv
 
 sudo aptitude install python-pip
 sudo pip install pip --upgrade
 sudo pip install virtualenv
+sudo pip install fabric
 
 # Install Nginx
 
