@@ -1,12 +1,99 @@
-{% extends "base.html" %}
+{% load announcetags %}
+{% load compress %}
+<!DOCTYPE html>
 
-{% block title %}
-  Mavenize | Welcome Home
-{% endblock %}
+<html lang="en">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <meta name="google-site-verification" content="iG0vt0xhdbmirkDZCs8LXQZdmmxwxvvhllOpNAMBMAA" />
 
-{% block body %}
-  <a href="{% url socialauth_begin 'facebook' %}">
-    Enter using Facebook
-  </a>
-{% endblock %}
+  <title>Welcome to Mavenize</title>
 
+  <link rel="stylesheet" href="{{ STATIC_URL }}css/vendor/didactGothic.css" type="text/css" />
+  <link rel="stylesheet" href="{{ STATIC_URL }}css/vendor/openSans.css" type="text/css" />
+  <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap.min.css" type="text/css" media="screen" />
+  <link rel="stylesheet" href="{{ STATIC_URL }}css/global.less" type="text/less" media="screen" />
+  <script type="text/javascript" src="{{ STATIC_URL }}js/vendor/google-analytics.js"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div id="landing-header" class="offset1 span10">
+        <h1>Bringing you and your friends together in the <u>real world</u> by finding things you'll love to do <b>with each other.</b></h1>
+      </div>
+    </div>
+    <div id="landing-carousel" class="carousel">
+      <div class="carousel-inner">
+        <div class="active item">
+          <div class="row">
+            <div class="span6 offset1 carousel-text">
+              <h2>Discover new movies.</h2>
+              <p>Follow friends and experts with similar tastes to get their latest recommendations.</p>
+            </div>
+            <div class="span4">
+              <div class="thumbnail">
+                <img src="{{ movie.image.url }}" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="item">
+          <div class="row">
+            <div class="span6 offset1 carousel-text">
+              <h2>Build your Scrapbook.</h2>
+              <p>Remember the movies that matter to you—add and organize movies you want to see or have already seen.</p>
+            </div>
+            <div class="span4">
+              <div class="thumbnail">
+                <img src="{{ STATIC_URL }}img/landing-2.png" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="item">
+          <div class="row">
+            <div class="span6 offset1 carousel-text">
+              <h2>Share with friends.</h2>
+              <p>Rave or "re-rave" about movies you love to your friends, so they know about them too!</p>
+            </div>
+            <div class="span4">
+              <div class="thumbnail">
+                <img src="{{ STATIC_URL }}img/landing-3.png" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="item">
+          <div class="row">
+            <div class="span6 offset1 carousel-text">
+              <h2>Watch them together.</h2>
+              <p>Meet up with friends who scrapbooked the same movies at you, sit back, and enjoy the show!</p>
+            </div>
+            <div class="span4">
+              <div class="thumbnail">
+                <img src="{{ STATIC_URL }}img/landing-4.png" />
+              </div>
+            </div>
+          </div>
+        </div>
+          </div>
+        </div>
+      </div>
+      <a class="carousel-control left" href="#landing-carousel" data-slide="prev">&lsaquo;</a>
+      <a class="carousel-control right" href="#landing-carousel" data-slide="next">&rsaquo;</a>
+    </div>
+  </div>
+  <img id="bg" src="{{ STATIC_URL }}img/landing.jpg" />
+
+  <script type="text/javascript" src="{{ STATIC_URL }}js/vendor/jquery.min.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/vendor/bootstrap.min.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/vendor/less.min.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function() {
+      $('#landing-carousel').carousel({
+        interval: 5000
+      });
+    });
+  </script>
+</body>
+</html>

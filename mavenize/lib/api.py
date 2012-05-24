@@ -76,6 +76,12 @@ def get_friends(user_id):
     return list(set(get_following(user_id)) &
                 set(get_followers(user_id)))
 
+def get_latest_movie():
+    """
+    Returns the most recent movie in the database.
+    """
+    return Movie.objects.latest('theater_date')
+
 
 def get_bookmarked_items(user_id):
     """
