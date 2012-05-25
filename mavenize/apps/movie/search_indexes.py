@@ -20,7 +20,7 @@ class MovieIndex(indexes.SearchIndex, indexes.Indexable):
         return [actor.name for actor in obj.actors.all()]
 
     def prepare_directors(self, obj):
-        return [director.name for director in director.objects.all()]
+        return [director.name for director in obj.directors.all()]
 
     def index_queryset(self):
         return self.get_model().objects.all()
