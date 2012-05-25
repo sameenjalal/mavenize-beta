@@ -78,9 +78,10 @@ def get_friends(user_id):
 
 def get_latest_movie():
     """
-    Returns the most recent movie in the database.
+    Returns the most recent movie with a picture in the database.
     """
-    return Movie.objects.latest('theater_date')
+    return Movie.objects.exclude(image__contains="default.jpg") \
+                        .latest('theater_date')
 
 
 def get_bookmarked_items(user_id):
