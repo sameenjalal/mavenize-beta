@@ -3,7 +3,7 @@ import urllib as urllib
 import urllib2,json
 import os
 from django.template import defaultfilters
-
+import unicodedata
 author_list = []
 
 BASE='http://api.rottentomatoes.com/api/public/v1.0/'
@@ -96,7 +96,8 @@ def downloadJSONRange(directory,start,end):
     #print('destination directory is ' + directory)
     for movie in Movie.objects.order_by("-theater_date")[start:end]:
         print('Starting download of ' + movie.title)
-        movieSearchURL=movieURL+'?'+urllib.urlencode({'apikey':KEY, 'q': movie.title})
+	decodedTitle = unicodedata.normalize('NFKD',movie.title).encode('ascii','ignore')
+        movieSearchURL=movieURL+'?'+urllib.urlencode({'apikey':KEY, 'q': decodedTitle})
         movieData = json.loads(urllib2.urlopen(movieSearchURL).read())
         movieData = movieData['movies']
         #We need to find the right movie now, because we don't want to just take the 1st result
@@ -113,15 +114,21 @@ def downloadJSONRange(directory,start,end):
             except KeyError:
                 print('...No imdb found, match by year')
                 matchByYear = True
+            except:
+                print('...invalid imdb id found')
                 
         if matchByYear == True:
-            for movietomatoe in movieData:
-                movieYear = defaultfilters.date(movie.theater_date,'Y')
-                #print('tomatoes date get ' + str(movietomatoe['year']))
-                #print('database date get ' + movieYear)
-                if movietomatoe['year'] == int(movieYear):
-                    correctMovieID = movietomatoe['id']
-                    break
+            try:
+
+                for movietomatoe in movieData:
+                    movieYear = defaultfilters.date(movie.theater_date,'Y')
+                    #print('tomatoes date get ' + str(movietomatoe['year']))
+                    #print('database date get ' + movieYear)
+                    if movietomatoe['year'] == int(movieYear):
+                        correctMovieID = movietomatoe['id']
+                        break
+            except:
+		print('...No year value set, skipping.')
 
         if correctMovieID==-1:
             
