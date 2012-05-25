@@ -11,7 +11,13 @@ def index(request):
     if request.user.is_authenticated():
         return activity_feed(request)
     else:
-        return render_to_response('index.html', {},
+        try:
+            context = {
+               'movie': api.get_latest_movie() 
+            }
+        except:
+            context = {}
+        return render_to_response('index.html', context,
             context_instance=RequestContext(request))
 
 @login_required

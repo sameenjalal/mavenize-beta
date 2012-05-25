@@ -24,17 +24,13 @@
         <p id="actors">
           <b>Actors:</b>
           {% for actor in actors %}
-            <a href="/movies/?actors={{ actor.name }}">
-              {{ actor.name }}
-            </a>{% if not forloop.last %},{% endif %}
+            <a href="/movies/?actors={{ actor.name }}">{{ actor.name }}</a>{% if not forloop.last %},{% endif %}
           {% endfor %}
         </p>
         <p id="directors">
           <b>Director{{ directors|pluralize }}:</b>
           {% for director in directors %}
-            <a href="/movies/?directors={{ director.name }}">
-              {{ director.name }}
-            </a>{% if not forloop.last %},{% endif %}
+            <a href="/movies/?directors={{ director.name }}">{{ director.name }}</a>{% if not forloop.last %},{% endif %}
           {% endfor %}
         </p>
       </section>
