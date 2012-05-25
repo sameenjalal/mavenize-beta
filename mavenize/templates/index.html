@@ -19,7 +19,10 @@
   <div class="container">
     <div class="row">
       <div id="landing-header" class="offset1 span10">
-        <h1>Bringing you and your friends together in the <u>real world</u> by finding things you'll love to do <b>with each other.</b></h1>
+        <h1>
+          <img src="{{ STATIC_URL }}img/logo.png" />
+          <p>Bringing you and your friends together in the <u>real world</u> by finding things you'll love to do <b>with each other.</b></p>
+        </h1>
       </div>
     </div>
     <div id="landing-carousel" class="carousel">
@@ -30,7 +33,7 @@
               <h2>Discover new movies.</h2>
               <p>Follow friends and experts with similar tastes to get their latest recommendations.</p>
             </div>
-            <div class="span4">
+            <div class="span3">
               <div class="thumbnail">
                 <img src="{{ movie.image.url }}" />
               </div>
@@ -76,11 +79,16 @@
             </div>
           </div>
         </div>
-          </div>
-        </div>
       </div>
       <a class="carousel-control left" href="#landing-carousel" data-slide="prev">&lsaquo;</a>
       <a class="carousel-control right" href="#landing-carousel" data-slide="next">&rsaquo;</a>
+    </div>
+    <div class="row">
+      <div class="span6 offset1" id="facebook-login">
+        <a href="{% url socialauth_begin 'facebook' %}">
+          <img src="{{ STATIC_URL }}img/facebook-login.png" />
+        </a>
+      </div>
     </div>
   </div>
   <img id="bg" src="{{ STATIC_URL }}img/landing.jpg" />

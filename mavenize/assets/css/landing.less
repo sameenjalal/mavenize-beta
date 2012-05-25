@@ -22,17 +22,26 @@
 #landing-header {
   h1 {
     background: @black;
-    color: @white;
-    font-size: 32px;
-    line-height: 100%;
     margin: 40px;
     opacity: 0.75;
     padding: 20px;
+    text-align: center;
     .RoundedCorners(10px);
+
+    p {
+      color: @white;
+      font-size: 32px;
+      line-height: 120%;
+      margin: 10px;
+    }
   }
 }
 
 #landing-carousel {
+  height: 200px;
+  position: relative;
+  z-index: 0;
+
   h2, p {
     color: @white;
     line-height: 100%;
@@ -56,9 +65,15 @@
     width: 550px;
     .RoundedCorners(10px);
   }
+}
 
-  .carousel-control {
-    top: 400px;
+#facebook-login {
+  padding: 0 20px;
+  position: relative;
+  z-index: 1;
+
+  a:hover, a:active {
+    display: inline-block;
+    .BoxShadow(4px, 4px, 4px, @black);
   }
-
 }

@@ -67,9 +67,16 @@
   <script type="text/javascript" src="{{ STATIC_URL }}js/vendor/underscore.min.js"></script>
   <script type="text/javascript" src="{{ STATIC_URL }}js/vendor/bootstrap.min.js"></script>
   <script type="text/javascript" src="{{ STATIC_URL }}js/vendor/less.min.js"></script>
-  <script type="text/javascript" src="{{ STATIC_URL }}js/loadBookmarks.js"></script>
   <script type="text/javascript" src="{{ STATIC_URL }}js/notifications.js"></script>
   <script type="text/javascript" src="{{ STATIC_URL }}js/bookmarks.js"></script>
+  {% endcompress %}
+
+  {% compress js %}
+  <script type="text/javascript" src="{{ STATIC_URL }}js/loadActivities.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/loadBookmarks.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/loadMovies.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/loadNotifications.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/loadUsers.js"></script>
   {% endcompress %}
 
   {% block js %}{% endblock %}
