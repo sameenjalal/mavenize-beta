@@ -554,6 +554,6 @@ else:
 # Announce
 ############################
 if is_prod():
-    ANNOUNCE_CLIENT_ADDR = '*:5500'
+    ANNOUNCE_CLIENT_ADDR = '198.101.193.28:5500'
     ANNOUNCE_API_ADDR = '198.101.193.28:6600'
 
