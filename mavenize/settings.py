@@ -479,22 +479,22 @@ INSTALLED_APPS = tuple(apps_list)
 
 NEXUS_REDIS_CONNECTIONS = [
     { 'host': '209.61.142.151',
-      'password': '&hunt3rk!ll3r$',
+      'password': '&Hunt3RK!ll3r$',
       'db': 0 },
     { 'host': '209.61.142.151',
-      'password': '&hunt3rk!ll3r$',
+      'password': '&Hunt3RK!ll3r$',
       'db': 1 },
     { 'host': '209.61.142.151',
-      'password': '&hunt3rk!ll3r$',
+      'password': '&Hunt3RK!ll3r$',
       'db': 2 },
     { 'host': '209.61.142.151',
-      'password': '&hunt3rk!ll3r$',
+      'password': '&Hunt3RK!ll3r$',
       'db': 3 },
     { 'host': '209.61.142.151',
-      'password': '&hunt3rk!ll3r$',
+      'password': '&Hunt3RK!ll3r$',
       'db': 4 },
     { 'host': '209.61.142.151',
-      'password': '&hunt3rk!ll3r$',
+      'password': '&Hunt3RK!ll3r$',
       'db': 5 }
 ]
 
