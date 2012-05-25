@@ -514,7 +514,6 @@ SOCIAL_AUTH_EXPIRATION = 'expires'
 SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/signup'
 LOGIN_URL = '/login'
 LOGIN_REDIRECT_URL = '/'
-SOCIAL_AUTH_REDIRECT_IS_HTTPS = True
 
 ############################
 # Facebook 
