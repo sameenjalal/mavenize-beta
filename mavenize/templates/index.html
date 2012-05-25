@@ -9,10 +9,12 @@
 
   <title>Welcome to Mavenize</title>
 
+  {% compress css %}
   <link rel="stylesheet" href="{{ STATIC_URL }}css/vendor/didactGothic.css" type="text/css" />
   <link rel="stylesheet" href="{{ STATIC_URL }}css/vendor/openSans.css" type="text/css" />
   <link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap.min.css" type="text/css" media="screen" />
   <link rel="stylesheet" href="{{ STATIC_URL }}css/global.less" type="text/less" media="screen" />
+  {% endcompress %}
   <script type="text/javascript" src="{{ STATIC_URL }}js/vendor/google-analytics.js"></script>
 </head>
 <body>
@@ -93,6 +95,7 @@
   </div>
   <img id="bg" src="{{ STATIC_URL }}img/landing.jpg" />
 
+  {% compress js %}
   <script type="text/javascript" src="{{ STATIC_URL }}js/vendor/jquery.min.js"></script>
   <script type="text/javascript" src="{{ STATIC_URL }}js/vendor/bootstrap.min.js"></script>
   <script type="text/javascript" src="{{ STATIC_URL }}js/vendor/less.min.js"></script>
@@ -103,5 +106,6 @@
       });
     });
   </script>
+  {% endcompress %}
 </body>
 </html>
