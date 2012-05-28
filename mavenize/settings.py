@@ -192,6 +192,7 @@ if is_prod():
     STATIC_URL = COMPRESS_URL = 'http://c352884.r84.cf1.rackcdn.com/'
     STATICFILES_STORAGE = COMPRESS_STORAGE = \
         'cumulus.storage.CloudFilesStaticStorage'
+    CUMULUS_TIMEOUT = 30
 
 ############################
 # Version Information
