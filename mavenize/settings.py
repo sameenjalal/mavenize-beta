@@ -479,22 +479,22 @@ INSTALLED_APPS = tuple(apps_list)
 
 NEXUS_REDIS_CONNECTIONS = [
     { 'host': '209.61.142.151',
-      'password': '&hunt3rk!ll3r$',
+      'password': '&Hunt3RK!ll3r$',
       'db': 0 },
     { 'host': '209.61.142.151',
-      'password': '&hunt3rk!ll3r$',
+      'password': '&Hunt3RK!ll3r$',
       'db': 1 },
     { 'host': '209.61.142.151',
-      'password': '&hunt3rk!ll3r$',
+      'password': '&Hunt3RK!ll3r$',
       'db': 2 },
     { 'host': '209.61.142.151',
-      'password': '&hunt3rk!ll3r$',
+      'password': '&Hunt3RK!ll3r$',
       'db': 3 },
     { 'host': '209.61.142.151',
-      'password': '&hunt3rk!ll3r$',
+      'password': '&Hunt3RK!ll3r$',
       'db': 4 },
     { 'host': '209.61.142.151',
-      'password': '&hunt3rk!ll3r$',
+      'password': '&Hunt3RK!ll3r$',
       'db': 5 }
 ]
 
@@ -547,13 +547,13 @@ if is_solo() or is_dev():
 else:
     HAYSTACK_CONNECTIONS['default'] = {
         'ENGINE': 'haystack.backends.solr_backend.SolrEngine',
-        'URL': '198.101.195.82:8983/solr',
+        'URL': 'http://198.101.195.82:8983/solr',
     }
 
 ############################
 # Announce
 ############################
 if is_prod():
-    ANNOUNCE_CLIENT_ADDR = '*:5500'
+    ANNOUNCE_CLIENT_ADDR = '198.101.193.28:5500'
     ANNOUNCE_API_ADDR = '198.101.193.28:6600'
 
