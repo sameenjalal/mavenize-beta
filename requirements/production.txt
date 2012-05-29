@@ -4,4 +4,5 @@ django-sendgrid==0.4.3
 gunicorn==0.14.3
 nexus-redis==0.3
 pysolr==2.1.0-beta
+raven==1.9.1
 supervisor==3.0a12
