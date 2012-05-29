@@ -469,6 +469,7 @@ if is_prod():
     apps_list += [
         'cumulus',
         'nexus_redis',
+        'raven.contrib.django',
         'sendgrid',
     ]
 
@@ -558,3 +559,7 @@ if is_prod():
     ANNOUNCE_CLIENT_ADDR = '198.101.193.28:5500'
     ANNOUNCE_API_ADDR = '198.101.193.28:6600'
 
+############################
+# Raven
+############################
+SENTRY_DSN = 'https://d53e20807c2e45ee8a586e1bc3423c46:ee1ead175980421aadb57bf229841239@app.getsentry.com/910'
