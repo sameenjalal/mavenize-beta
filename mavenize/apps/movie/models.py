@@ -7,7 +7,7 @@ from django.dispatch import receiver
 
 class Genre(models.Model):
     name = models.CharField(max_length=255)
-    url = models.SlugField(null=True, max_length=255)
+    url = models.SlugField(null=True, blank=True, max_length=255)
 
     def __unicode__(self):
         return self.name
@@ -19,7 +19,7 @@ class Genre(models.Model):
 
 class Actor(models.Model):
     name = models.CharField(max_length=255)
-    url = models.SlugField(null=True, max_length=255)
+    url = models.SlugField(null=True, blank=True, max_length=255)
     
     def __unicode__(self):
         return self.name
@@ -31,7 +31,7 @@ class Actor(models.Model):
 
 class Director(models.Model):
     name = models.CharField(max_length=255)
-    url = models.SlugField(null=True, max_length=255)
+    url = models.SlugField(null=True, blank=True, max_length=255)
 
     def __unicode__(self):
         return self.name
@@ -48,7 +48,7 @@ class Movie(models.Model):
     keywords = models.TextField()
     runtime = models.SmallIntegerField()
     synopsis = models.TextField()
-    theater_date = models.DateField(null=True)
+    theater_date = models.DateField(null=True, blank=True)
     image = models.ImageField(
         upload_to='img/movies',
         default='img/movies/default.jpg',
@@ -57,7 +57,7 @@ class Movie(models.Model):
     genre = models.ManyToManyField(Genre)
     directors = models.ManyToManyField(Director)
     actors = models.ManyToManyField(Actor)
-    url = models.SlugField(null=True, max_length=255)
+    url = models.SlugField(null=True, blank=True, max_length=255)
 
     def __unicode__(self):
         return self.title
