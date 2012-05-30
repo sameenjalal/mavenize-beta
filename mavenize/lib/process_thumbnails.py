@@ -4,5 +4,6 @@ from sorl.thumbnail import get_thumbnail
 for movie in Movie.objects.all():
     try:
         get_thumbnail(movie.image, 'x285')
-    except IOError:
-        print movie.pk
+    except Exception, e:
+        print "Error processing Movie ID: %s" % (str(movie.pk))
+        print e
