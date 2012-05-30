@@ -11,7 +11,7 @@ def cache_thumbnails():
 
 
 @task(ignore_result=True)
-def cache_subset(start, end, callback=None)
+def cache_subset(start, end, callback=None):
     for movie in Movie.objects.all()[start:end]:
         try:
             get_thumbnail(movie.image, 'x285')
