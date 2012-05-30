@@ -1,6 +1,6 @@
 from movie.models import Movie
 from sorl.thumbnail import get_thumbnail
-from celery import task
+from celery.task import task
 
 def cache_thumbnails():
     num_movies = Movie.objects.all().count()
