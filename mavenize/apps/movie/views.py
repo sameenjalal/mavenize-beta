@@ -9,6 +9,7 @@ from django.utils import simplejson
 from django.utils.html import escape, linebreaks
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.core import serializers
+from django.views.decorators.cache import cache_page
 
 from bookmark.models import Bookmark
 from movie.models import Movie, Genre, Actor, Director
@@ -20,6 +21,7 @@ from utils import pop_empty_keys
 from sorl.thumbnail import get_thumbnail
 
 @login_required
+@cache_page(60 * 240)
 def explore(request, time_period=None, page=None):
     """
     If the request is not AJAX, returns the skeleton HTML.  If the
@@ -94,6 +96,7 @@ def profile(request, title):
         context_instance=RequestContext(request))
 
 @login_required
+@cache_page(60 * 1080)
 def genres(request):
     """
     Returns the list of all existing genres in JSON.
@@ -106,6 +109,7 @@ def genres(request):
     return HttpResponse(response, mimetype="application/json")
 
 @login_required
+@cache_page(60 * 1080)
 def cast(request):
     """
     Returns the list of all existing actors and directors in JSON.
