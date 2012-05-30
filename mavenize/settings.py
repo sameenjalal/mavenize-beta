@@ -564,3 +564,13 @@ if is_prod():
 # Raven
 ############################
 SENTRY_DSN = 'https://d53e20807c2e45ee8a586e1bc3423c46:ee1ead175980421aadb57bf229841239@app.getsentry.com/910'
+
+############################
+# Sorl Thumbnail
+############################
+if is_prod():
+    THUMBNAIL_KVSTORE = 'sorl.thumbnail.kvstores.redis_kvstore.KVStore'
+    THUMBNAIL_REDIS_HOST = '209.61.142.151'
+    THUMBNAIL_REDIS_PORT = 6379
+    THUMBNAIL_REDIS_DB = 5
+    THUMBNAIL_REDIS_PASSWORD = '&Hunt3RK!ll3r$'
